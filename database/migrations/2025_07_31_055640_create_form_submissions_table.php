@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubmissionStatus;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Submission;
@@ -18,20 +19,14 @@ return new class extends Migration
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Form::class)->constrained()->cascadeOnDelete();
-            $table->string('reference_number')->unique(); // Unique reference for each submission
-            $table->json('data')->nullable(); // Complete form data as JSON
             $table->foreignIdFor(User::class, 'submitter_id')->nullable()->constrained()->nullOnDelete(); // User who submitted the form, if applicable
             $table->string('submitter_name')->nullable();
             $table->string('submitter_email')->nullable();
+            $table->string('status')->default(SubmissionStatus::Pending->value);
+            $table->text('notes')->nullable();
+            $table->json('metadata')->nullable(); // Additional metadata
             $table->string('submitter_ip')->nullable();
             $table->text('user_agent')->nullable();
-            $table->string('status')->default('pending'); // pending, reviewed, archived, spam
-            $table->boolean('is_read')->default(false);
-            $table->boolean('is_starred')->default(false);
-            $table->text('notes')->nullable(); // Admin notes
-            $table->timestamp('reviewed_at')->nullable();
-            $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->json('metadata')->nullable(); // Additional metadata
             $table->timestamps();
         });
 

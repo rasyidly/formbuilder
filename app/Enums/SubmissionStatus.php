@@ -4,12 +4,12 @@ namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum SubmissionStatus implements HasLabel
+enum SubmissionStatus: string implements HasLabel
 {
-    case Pending;
-    case Approved;
-    case Rejected;
-    case Archived;
+    case Pending = 'Pending';
+    case Approved = 'Approved';
+    case Rejected = 'Rejected';
+    case Archived = 'Archived';
 
     public function getLabel(): ?string
     {
