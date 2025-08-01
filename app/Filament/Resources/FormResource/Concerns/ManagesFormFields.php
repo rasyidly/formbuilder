@@ -67,7 +67,7 @@ trait ManagesFormFields
                 : array_filter(explode(',', $data['validation_rules']));
         }
 
-        // Add type-specific validation rules
+        // Add type-specific validation rulese
         $validationRules = $this->addTypeSpecificValidationRules($fieldType, $data, $validationRules);
 
         // Prepare field settings

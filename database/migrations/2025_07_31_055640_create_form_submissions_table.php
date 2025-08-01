@@ -34,7 +34,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(FormField::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Submission::class)->constrained()->cascadeOnDelete();
-            $table->string('field_name'); // Backup field name in case field is deleted
+            $table->string('field_label'); // Backup field label in case field is deleted
             $table->string('field_type'); // Field type at time of submission
             $table->longText('value')->nullable(); // Field value (can be large for file uploads)
             $table->json('files_metadata')->nullable(); // For file uploads: original name, path, size, etc.
