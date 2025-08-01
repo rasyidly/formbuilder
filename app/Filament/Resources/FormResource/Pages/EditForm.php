@@ -23,7 +23,6 @@ class EditForm extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Load existing fields into the fields builder
         $fields = $this->record->fields()->orderBy('sequence')->get();
 
         $fieldsData = [];
@@ -68,37 +67,8 @@ class EditForm extends EditRecord
 
     protected function afterSave(): void
     {
-        $this->saveFormFields();
-    }
-
-    protected function saveFormFields(): void
-    {
         $formFields = array_values($this->data['fields'] ?? []);
-        $existingFields = $this->record->fields()->get()->keyBy('sequence');
 
-        // Keep track of sequences that are still being used
-        $usedSequences = [];
-
-        foreach ($formFields as $index => $fieldData) {
-            $usedSequences[] = $index;
-
-            // Check if field exists at this sequence
-            if ($existingFields->has($index)) {
-                // Update existing field
-                $this->updateFormField($existingFields[$index], $fieldData, $index);
-            } else {
-                // Create new field
-                $this->createFormField($fieldData, $index);
-            }
-        }
-
-        // Delete fields that are no longer used
-        $fieldsToDelete = $existingFields->filter(function ($field) use ($usedSequences) {
-            return ! in_array($field->sequence, $usedSequences);
-        });
-
-        foreach ($fieldsToDelete as $field) {
-            $field->delete();
-        }
+        $this->upsertFormFields($formFields, $this->record->id);
     }
 }

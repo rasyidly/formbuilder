@@ -14,7 +14,7 @@ class FormBlockRegistry
             SelectBlock::make(),
             RadioBlock::make(),
             CheckboxBlock::make(),
-            SingleCheckboxBlock::make(),
+            CheckboxListBlock::make(),
             FileBlock::make(),
             DateBlock::make(),
             TimeBlock::make(),

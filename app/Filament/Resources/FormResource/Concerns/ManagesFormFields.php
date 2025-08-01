@@ -7,86 +7,78 @@ use Illuminate\Support\Str;
 
 trait ManagesFormFields
 {
-    protected function createFormField(array $fieldData, int $sequence): void
+    /**
+     * Upsert form fields for a form (create, update, soft delete removed fields)
+     * @param array $fieldsData Array of field data, each must have 'id' if updating
+     * @param int $formId
+     */
+    protected function upsertFormFields(array $fieldsData, int $formId): void
     {
-        $fieldType = $fieldData['type'];
-        $data = $fieldData['data'];
+        // Get all current field ids for this form
+        $existingFields = FormField::where('form_id', $formId)->get();
+        $existingIds = $existingFields->pluck('id')->toArray();
+        $incomingIds = collect($fieldsData)->pluck('id')->filter()->toArray();
 
-        // Prepare options for fields that support them
-        $options = null;
-        if (in_array($fieldType, ['select', 'radio', 'checkbox']) && isset($data['options'])) {
-            $options = $data['options'];
+        // Soft delete fields that are not present in incoming data
+        $toDelete = array_diff($existingIds, $incomingIds);
+        if (!empty($toDelete)) {
+            FormField::whereIn('id', $toDelete)->delete();
         }
 
-        // Prepare validation rules
-        $validationRules = [];
-        if (isset($data['validation_rules'])) {
-            $validationRules = is_array($data['validation_rules'])
-                ? $data['validation_rules']
-                : array_filter(explode(',', $data['validation_rules']));
+        foreach ($fieldsData as $sequence => $fieldData) {
+            $fieldType = $fieldData['type'];
+            $data = $fieldData['data'];
+            $id = $fieldData['id'] ?? null;
+
+            // Prepare options for fields that support them
+            $options = null;
+            if (in_array($fieldType, ['select', 'radio', 'checkbox']) && isset($data['options'])) {
+                $options = $data['options'];
+            }
+
+            // Prepare validation rules
+            $validationRules = [];
+            if (isset($data['validation_rules'])) {
+                $validationRules = is_array($data['validation_rules'])
+                    ? $data['validation_rules']
+                    : array_filter(explode(',', $data['validation_rules']));
+            }
+
+            // Add type-specific validation rules
+            $validationRules = $this->addTypeSpecificValidationRules($fieldType, $data, $validationRules);
+
+            // Prepare field settings
+            $settings = $this->prepareFieldSettings($data);
+
+            $fieldPayload = [
+                'form_id' => $formId,
+                'sequence' => $sequence,
+                'label' => $data['label'],
+                'type' => $fieldType,
+                'placeholder' => $data['placeholder'] ?? null,
+                'help_text' => $data['help_text'] ?? null,
+                'options' => $options ? array_values($options) : null,
+                'validation_rules' => $validationRules,
+                'conditional_logic' => null, // TODO: Implement conditional logic
+                'settings' => $settings,
+                'is_required' => $data['is_required'] ?? false
+            ];
+
+            if ($id) {
+                // Update existing field
+                $field = FormField::find($id);
+                if ($field) {
+                    $field->update($fieldPayload);
+                    // Restore if soft deleted
+                    if (method_exists($field, 'restore') && $field->trashed()) {
+                        $field->restore();
+                    }
+                }
+            } else {
+                // Create new field
+                FormField::create($fieldPayload);
+            }
         }
-
-        // Add type-specific validation rules
-        $validationRules = $this->addTypeSpecificValidationRules($fieldType, $data, $validationRules);
-
-        // Prepare field settings
-        $settings = $this->prepareFieldSettings($data);
-
-        FormField::create([
-            'form_id' => $this->record->id,
-            'sequence' => $sequence,
-            'name' => Str::snake($data['label']),
-            'label' => $data['label'],
-            'type' => $fieldType,
-            'placeholder' => $data['placeholder'] ?? null,
-            'help_text' => $data['help_text'] ?? null,
-            'options' => $options ? array_values($options) : null,
-            'validation_rules' => $validationRules,
-            'conditional_logic' => null, // TODO: Implement conditional logic
-            'settings' => $settings,
-            'is_required' => $data['is_required'] ?? false
-        ]);
-    }
-
-    protected function updateFormField(FormField $field, array $fieldData, int $sequence): void
-    {
-        $fieldType = $fieldData['type'];
-        $data = $fieldData['data'];
-
-        // Prepare options for fields that support them
-        $options = null;
-        if (in_array($fieldType, ['select', 'radio', 'checkbox']) && isset($data['options'])) {
-            $options = $data['options'];
-        }
-
-        // Prepare validation rules
-        $validationRules = [];
-        if (isset($data['validation_rules'])) {
-            $validationRules = is_array($data['validation_rules'])
-                ? $data['validation_rules']
-                : array_filter(explode(',', $data['validation_rules']));
-        }
-
-        // Add type-specific validation rulese
-        $validationRules = $this->addTypeSpecificValidationRules($fieldType, $data, $validationRules);
-
-        // Prepare field settings
-        $settings = $this->prepareFieldSettings($data);
-
-        // Update the existing field
-        $field->update([
-            'sequence' => $sequence,
-            'name' => Str::snake($data['label']),
-            'label' => $data['label'],
-            'type' => $fieldType,
-            'placeholder' => $data['placeholder'] ?? null,
-            'help_text' => $data['help_text'] ?? null,
-            'options' => $options ? array_values($options) : null,
-            'validation_rules' => $validationRules,
-            'conditional_logic' => null, // TODO: Implement conditional logic
-            'settings' => $settings,
-            'is_required' => $data['is_required'] ?? false
-        ]);
     }
 
     protected function addTypeSpecificValidationRules(string $fieldType, array $data, array $validationRules): array

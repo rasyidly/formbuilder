@@ -22,9 +22,6 @@ class CreateForm extends CreateRecord
     protected function afterCreate(): void
     {
         $fields = array_values($this->data['fields'] ?? []);
-
-        foreach ($fields as $index => $fieldData) {
-            $this->createFormField($fieldData, $index);
-        }
+        $this->upsertFormFields($fields, $this->record->id);
     }
 }
