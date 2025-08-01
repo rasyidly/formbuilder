@@ -27,16 +27,20 @@ class ListForms extends ListRecords
                 ->badgeColor('gray'),
             'draft' => Tab::make('Draft')
                 ->badge(fn() => \App\Models\Form::draft()->count())
-                ->badgeColor('gray')
+                ->badgeColor('warning')
                 ->modifyQueryUsing(fn(Builder $query) => $query->draft()),
             'published' => Tab::make('Published')
                 ->badge(fn() => \App\Models\Form::published()->count())
-                ->badgeColor('gray')
+                ->badgeColor('success')
                 ->modifyQueryUsing(fn(Builder $query) => $query->published()),
             'archived' => Tab::make('Archived')
                 ->badge(fn() => \App\Models\Form::archived()->count())
                 ->badgeColor('gray')
                 ->modifyQueryUsing(fn(Builder $query) => $query->archived()),
+            'trashed' => Tab::make('Trashed')
+                ->badge(fn() => \App\Models\Form::onlyTrashed()->count())
+                ->badgeColor('gray')
+                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
         ];
     }
 }
