@@ -17,6 +17,12 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('view')
+                ->label(__('View form'))
+                ->url(fn() => route('forms.show', ['slug' => $this->record->slug]))
+                ->icon('heroicon-o-eye')
+                ->openUrlInNewTab()
+                ->color('gray'),
             Actions\DeleteAction::make(),
         ];
     }

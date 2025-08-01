@@ -61,19 +61,25 @@ class FormResource extends Resource
                         ]),
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make([
+                    Forms\Components\Section::make('Publication')->schema([
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label('Published At')
+                            ->helperText('Set a date to publish the form automatically')
+                            ->nullable(),
+                    ]),
                     Forms\Components\Section::make('Configuration')
                         ->schema([
-                            Forms\Components\DateTimePicker::make('published_at')
-                                ->label('Published At')
-                                ->nullable(),
+                            Forms\Components\Toggle::make('settings.require_name_input')
+                                ->label('Collect submitter name'),
+                            Forms\Components\Toggle::make('settings.require_email_input')
+                                ->label('Collect submitter email'),
                             Forms\Components\DateTimePicker::make('archived_at')
                                 ->label('Archived At')
                                 ->nullable(),
                             Forms\Components\Select::make('created_by')
                                 ->relationship('creator', 'name')
                                 ->searchable()
-                                ->default(fn () => Auth::id())
-                                ->required(),
+                                ->default(fn() => Auth::id()),
                         ]),
                 ]),
             ]);
@@ -102,7 +108,7 @@ class FormResource extends Resource
                         return 'Draft';
                     })
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         'Published' => 'success',
                         'Archived' => 'gray',
                         default => 'warning',
