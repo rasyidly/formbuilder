@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FormFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,17 +25,16 @@ class FormField extends Model
         'validation_rules',
         'conditional_logic',
         'settings',
-        'is_required',
-        'is_active',
+        'is_required'
     ];
 
     protected $casts = [
+        'type' => FormFieldType::class,
         'options' => 'array',
         'validation_rules' => 'array',
         'conditional_logic' => 'array',
         'settings' => 'array',
-        'is_required' => 'boolean',
-        'is_active' => 'boolean',
+        'is_required' => 'boolean'
     ];
 
     /**
@@ -51,14 +51,6 @@ class FormField extends Model
     public function submissionValues(): HasMany
     {
         return $this->hasMany(SubmissionValue::class);
-    }
-
-    /**
-     * Scope a query to only include active fields.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
     }
 
     /**
@@ -82,7 +74,7 @@ class FormField extends Model
      */
     public function isFileUpload(): bool
     {
-        return in_array($this->type, ['file', 'image', 'document']);
+        return $this->type->isFileUpload();
     }
 
     /**
@@ -90,7 +82,7 @@ class FormField extends Model
      */
     public function hasOptions(): bool
     {
-        return in_array($this->type, ['select', 'radio', 'checkbox']) && ! empty($this->options);
+        return $this->type->hasOptions() && ! empty($this->options);
     }
 
     /**
@@ -112,7 +104,7 @@ class FormField extends Model
      */
     public function getOptionsArray(): array
     {
-        if (! $this->hasOptions()) {
+        if (!$this->hasOptions()) {
             return [];
         }
 

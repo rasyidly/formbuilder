@@ -47,7 +47,7 @@ class EditForm extends EditRecord
             }
 
             $fieldsData[] = [
-                'type' => $field->type,
+                'type' => $field->type->value,
                 'data' => $fieldData,
             ];
         }

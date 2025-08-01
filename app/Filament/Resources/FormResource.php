@@ -92,8 +92,13 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->getStateUsing(function ($record) {
-                        if ($record->archived_at) return 'Archived';
-                        if ($record->published_at) return 'Published';
+                        if ($record->archived_at) {
+                            return 'Archived';
+                        }
+                        if ($record->published_at) {
+                            return 'Published';
+                        }
+
                         return 'Draft';
                     })
                     ->badge()
@@ -114,12 +119,12 @@ class FormResource extends Resource
                 AppComponents\Columns\CreatedAtColumn::make(),
             ])
             ->filters([
-                // 
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

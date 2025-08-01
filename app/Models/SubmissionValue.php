@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FormFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ class SubmissionValue extends Model
     ];
 
     protected $casts = [
+        'field_type' => FormFieldType::class,
         'files_metadata' => 'array',
     ];
 
@@ -45,7 +47,7 @@ class SubmissionValue extends Model
      */
     public function scopeFiles($query)
     {
-        return $query->whereIn('field_type', ['file', 'image', 'document']);
+        return $query->whereIn('field_type', [FormFieldType::FILE->value, FormFieldType::IMAGE->value]);
     }
 
     /**
@@ -53,7 +55,7 @@ class SubmissionValue extends Model
      */
     public function isFileUpload(): bool
     {
-        return in_array($this->field_type, ['file', 'image', 'document']);
+        return $this->field_type->isFileUpload();
     }
 
     /**
@@ -103,7 +105,7 @@ class SubmissionValue extends Model
             return $this->getOriginalFilename() ?? $this->value ?? 'File uploaded';
         }
 
-        if ($this->field_type === 'checkbox' && is_array($this->value)) {
+        if ($this->field_type === FormFieldType::CHECKBOX && is_array($this->value)) {
             return implode(', ', $this->value);
         }
 
@@ -115,15 +117,10 @@ class SubmissionValue extends Model
      */
     public function getRawValue(): mixed
     {
-        switch ($this->field_type) {
-            case 'number':
-                return is_numeric($this->value) ? (float) $this->value : $this->value;
-            case 'checkbox':
-                return is_string($this->value) ? json_decode($this->value, true) : $this->value;
-            case 'boolean':
-                return filter_var($this->value, FILTER_VALIDATE_BOOLEAN);
-            default:
-                return $this->value;
-        }
+        return match ($this->field_type) {
+            FormFieldType::NUMBER => is_numeric($this->value) ? (float) $this->value : $this->value,
+            FormFieldType::CHECKBOX => is_string($this->value) ? json_decode($this->value, true) : $this->value,
+            default => $this->value,
+        };
     }
 }

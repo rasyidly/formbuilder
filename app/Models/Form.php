@@ -45,14 +45,6 @@ class Form extends Model
     }
 
     /**
-     * Get all active fields for this form.
-     */
-    public function activeFields(): HasMany
-    {
-        return $this->hasMany(FormField::class)->where('is_active', true)->orderBy('sequence');
-    }
-
-    /**
      * Get all submissions for this form.
      */
     public function submissions(): HasMany

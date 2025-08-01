@@ -26,7 +26,6 @@ return new class extends Migration
             $table->json('conditional_logic')->nullable(); // Show/hide conditions
             $table->json('settings')->nullable(); // Additional field settings
             $table->boolean('is_required')->default(false);
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

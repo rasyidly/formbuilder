@@ -26,8 +26,18 @@ class SelectBlock
                     ->label('Options')
                     ->schema([
                         Forms\Components\TextInput::make('label')
+                            ->key(null)
                             ->label('Label')
-                            ->required(),
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (!empty($state)) {
+                                    $set('value', $state);
+                                }
+                            }),
+                        Forms\Components\TextInput::make('value')
+                            ->key(null)
+                            ->label('Value')
                     ])
                     ->required()
                     ->minItems(1),

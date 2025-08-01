@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\FormResource\Concerns;
 
-use Illuminate\Support\Str;
 use App\Models\FormField;
+use Illuminate\Support\Str;
 
 trait ManagesFormFields
 {
@@ -44,8 +44,7 @@ trait ManagesFormFields
             'validation_rules' => $validationRules,
             'conditional_logic' => null, // TODO: Implement conditional logic
             'settings' => $settings,
-            'is_required' => $data['is_required'] ?? false,
-            'is_active' => true,
+            'is_required' => $data['is_required'] ?? false
         ]);
     }
 
@@ -86,8 +85,7 @@ trait ManagesFormFields
             'validation_rules' => $validationRules,
             'conditional_logic' => null, // TODO: Implement conditional logic
             'settings' => $settings,
-            'is_required' => $data['is_required'] ?? false,
-            'is_active' => true,
+            'is_required' => $data['is_required'] ?? false
         ]);
     }
 
