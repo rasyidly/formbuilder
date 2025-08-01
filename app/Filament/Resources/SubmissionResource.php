@@ -33,7 +33,7 @@ class SubmissionResource extends Resource
                         ->relationship('form', 'name')
                         ->searchable()
                         ->required()
-                        ->disabled(fn($context) => $context === 'edit')
+                        ->disabled(fn(string $operation) => $operation === 'edit')
                         ->preload()
                         ->live()
                         ->columnSpan(2),
@@ -89,15 +89,15 @@ class SubmissionResource extends Resource
                             Forms\Components\TextInput::make('submitter_ip')
                                 ->label('Submitter IP')
                                 ->disabled()
-                                ->visible(fn($context) => $context === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                             Forms\Components\TextInput::make('user_agent')
                                 ->label('User Agent')
                                 ->disabled()
-                                ->visible(fn($context) => $context === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                             Forms\Components\DateTimePicker::make('created_at')
                                 ->label('Created At')
                                 ->disabled()
-                                ->visible(fn($context) => $context === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                         ]),
                 ])->visible(fn($get) => $get('form_id') !== null),
             ]);
@@ -106,11 +106,25 @@ class SubmissionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->groups(['form.name'])
             ->columns([
                 Tables\Columns\TextColumn::make('form.name')
                     ->label('Form')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('submitter_name')
+                    ->label('Submitter Name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('submitter_email')
+                    ->label('Submitter Email')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('submitter_ip')
+                    ->label('Submitter IP'),
+                Tables\Columns\TextColumn::make('user_agent')
+                    ->label('User Agent')
+                    ->limit(40),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Submitted At')
                     ->dateTime()
@@ -123,7 +137,9 @@ class SubmissionResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('form_id')
                     ->label('Form')
-                    ->relationship('form', 'name'),
+                    ->relationship('form', 'name')
+                    ->searchable()
+                    ->preload()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
