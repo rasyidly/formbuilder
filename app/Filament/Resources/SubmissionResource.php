@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components as AppComponents;
 use App\Filament\Resources\SubmissionResource\Pages;
 use App\Models;
 use App\Models\Submission;
@@ -117,12 +118,7 @@ class SubmissionResource extends Resource
                 Tables\Columns\TextColumn::make('values_count')
                     ->label('Fields Filled')
                     ->counts('values'),
-                Tables\Columns\TextColumn::make('values_preview')
-                    ->label('Preview')
-                    ->getStateUsing(function ($record) {
-                        return $record->values->map(fn($v) => $v->field_label . ': ' . $v->getDisplayValue())->implode(', ');
-                    })
-                    ->limit(50),
+                AppComponents\Columns\CreatedAtColumn::make()
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('form_id')
