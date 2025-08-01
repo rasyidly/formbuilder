@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Components\Forms\BlockFields\FormBlockRegistry;
+use App\Filament\Components as AppComponents;
 use App\Filament\Resources\FormResource\Pages;
 use App\Models\Form as FormModel;
 use Filament\Forms;
@@ -53,7 +53,7 @@ class FormResource extends Resource
                     Forms\Components\Section::make('Fields')
                         ->schema([
                             Forms\Components\Builder::make('fields')
-                                ->blocks(FormBlockRegistry::getAllBlocks())
+                                ->blocks(AppComponents\Forms\BlockFields\FormBlockRegistry::getAllBlocks())
                                 ->addActionLabel('Add Field')
                                 ->reorderable()
                                 ->collapsible()
@@ -89,6 +89,21 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('fields_count')
+                    ->label('Fields Count'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->getStateUsing(function ($record) {
+                        if ($record->archived_at) return 'Archived';
+                        if ($record->published_at) return 'Published';
+                        return 'Draft';
+                    })
+                    ->badge()
+                    ->color(fn($state) => match ($state) {
+                        'Published' => 'success',
+                        'Archived' => 'gray',
+                        default => 'warning',
+                    }),
                 Tables\Columns\TextColumn::make('creator.name')
                     ->label('Created By')
                     ->sortable(),
@@ -98,9 +113,7 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('archived_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
+                AppComponents\Columns\CreatedAtColumn::make(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
