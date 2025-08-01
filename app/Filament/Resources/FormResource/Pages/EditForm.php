@@ -4,6 +4,7 @@ namespace App\Filament\Resources\FormResource\Pages;
 
 use App\Filament\Resources\FormResource;
 use App\Filament\Resources\FormResource\Concerns\ManagesFormFields;
+use App\Filament\Resources\SubmissionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
@@ -17,6 +18,11 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('viewSubmissions')
+                ->label(__('Submissions'))
+                ->url(SubmissionResource::getUrl('index', ['tableFilters' => ['form_id' => ['value' => $this->record->id]]]))
+                ->icon('heroicon-o-inbox')
+                ->color('gray'),
             Actions\Action::make('view')
                 ->label(__('View form'))
                 ->url(fn() => route('forms.show', ['slug' => $this->record->slug]))
