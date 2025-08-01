@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubmissionResource\Pages;
-use App\Models\FormField;
+use App\Models;
 use App\Models\Submission;
 use Filament\Forms\Form;
 use Filament\Forms;
@@ -32,7 +32,10 @@ class SubmissionResource extends Resource
                         ->required()
                         ->disabled(fn($context) => $context === 'edit')
                         ->preload()
-                        ->live()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            $set('data', []);
+                        })
                         ->columnSpan(2),
                     Forms\Components\Placeholder::make('form_status')
                         ->label('Form Status')
@@ -41,7 +44,7 @@ class SubmissionResource extends Resource
                             if (! $formId) {
                                 return '-';
                             }
-                            $form = \App\Models\Form::withTrashed()->find($formId);
+                            $form = Models\Form::withTrashed()->find($formId);
                             if (! $form) {
                                 return 'Form not found';
                             }
@@ -64,11 +67,11 @@ class SubmissionResource extends Resource
                             if (! $formId) {
                                 return [];
                             }
-                            $form = \App\Models\Form::with('fields')->find($formId);
+                            $form = Models\Form::with('fields')->find($formId);
                             if (! $form) {
                                 return [];
                             }
-                            return $form->fields->map(function (FormField $field) {
+                            return $form->fields->map(function (Models\FormField $field) {
                                 return $field->type->getField($field)
                                     ->label($field->label)
                                     ->required($field->is_required)
