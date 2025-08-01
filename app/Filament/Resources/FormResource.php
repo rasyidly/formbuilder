@@ -72,7 +72,7 @@ class FormResource extends Resource
                             Forms\Components\Select::make('created_by')
                                 ->relationship('creator', 'name')
                                 ->searchable()
-                                ->default(fn() => Auth::id())
+                                ->default(fn () => Auth::id())
                                 ->required(),
                         ]),
                 ]),
@@ -102,7 +102,7 @@ class FormResource extends Resource
                         return 'Draft';
                     })
                     ->badge()
-                    ->color(fn($state) => match ($state) {
+                    ->color(fn ($state) => match ($state) {
                         'Published' => 'success',
                         'Archived' => 'gray',
                         default => 'warning',

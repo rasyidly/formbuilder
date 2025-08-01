@@ -24,24 +24,24 @@ class ListForms extends ListRecords
     {
         return [
             'all' => Tab::make('All')
-                ->badge(fn() => Form::count())
+                ->badge(fn () => Form::count())
                 ->badgeColor('gray'),
             'draft' => Tab::make('Draft')
-                ->badge(fn() => Form::draft()->count())
+                ->badge(fn () => Form::draft()->count())
                 ->badgeColor('warning')
-                ->modifyQueryUsing(fn(Builder $query) => $query->draft()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->draft()),
             'published' => Tab::make('Published')
-                ->badge(fn() => Form::published()->count())
+                ->badge(fn () => Form::published()->count())
                 ->badgeColor('success')
-                ->modifyQueryUsing(fn(Builder $query) => $query->published()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->published()),
             'archived' => Tab::make('Archived')
-                ->badge(fn() => Form::archived()->count())
+                ->badge(fn () => Form::archived()->count())
                 ->badgeColor('gray')
-                ->modifyQueryUsing(fn(Builder $query) => $query->archived()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->archived()),
             'trashed' => Tab::make('Trashed')
-                ->badge(fn() => Form::onlyTrashed()->count())
+                ->badge(fn () => Form::onlyTrashed()->count())
                 ->badgeColor('gray')
-                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->onlyTrashed()),
         ];
     }
 }

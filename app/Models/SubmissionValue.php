@@ -21,7 +21,6 @@ class SubmissionValue extends Model
         'files_metadata',
     ];
 
-
     protected function casts(): array
     {
         return [

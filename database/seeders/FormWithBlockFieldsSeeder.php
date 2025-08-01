@@ -2,11 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Form;
-use App\Models\FormField;
-use App\Filament\Components\Forms\BlockFields\FormBlockRegistry;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Seeder;
 
 class FormWithBlockFieldsSeeder extends Seeder
 {
@@ -18,7 +15,7 @@ class FormWithBlockFieldsSeeder extends Seeder
         ], [
             'name' => 'Sample Form with All Block Fields',
             'description' => 'A form containing all block field types.',
-            'published_at' => now()
+            'published_at' => now(),
         ]);
 
         // Prepare all fields

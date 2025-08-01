@@ -24,7 +24,7 @@ class FormField extends Model
         'validation_rules',
         'conditional_logic',
         'settings',
-        'is_required'
+        'is_required',
     ];
 
     protected function casts(): array
@@ -35,7 +35,7 @@ class FormField extends Model
             'validation_rules' => 'array',
             'conditional_logic' => 'array',
             'settings' => 'array',
-            'is_required' => 'boolean'
+            'is_required' => 'boolean',
         ];
     }
 
@@ -106,7 +106,7 @@ class FormField extends Model
      */
     public function getOptionsArray(): array
     {
-        if (!$this->hasOptions()) {
+        if (! $this->hasOptions()) {
             return [];
         }
 

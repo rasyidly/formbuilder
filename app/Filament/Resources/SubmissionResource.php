@@ -7,9 +7,9 @@ use App\Filament\Resources\SubmissionResource\Pages;
 use App\Models;
 use App\Models\Submission;
 use App\Models\User;
-use Filament\Forms\Form;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -33,20 +33,22 @@ class SubmissionResource extends Resource
                         ->relationship('form', 'name')
                         ->searchable()
                         ->required()
-                        ->disabled(fn(string $operation) => $operation === 'edit')
+                        ->disabled(fn (string $operation) => $operation === 'edit')
                         ->preload()
                         ->live()
                         ->columnSpan(2),
                     Forms\Components\Placeholder::make('form_status')
                         ->label('Form Status')
                         ->content(function ($get) {
-                            if ($form = Models\Form::withTrashed()->find($get('form_id')))
+                            if ($form = Models\Form::withTrashed()->find($get('form_id'))) {
                                 return match (true) {
                                     $form->trashed() => 'Deleted',
                                     (bool) $form->archived_at => 'Archived',
                                     (bool) $form->published_at => 'Published',
                                     default => 'Draft',
                                 };
+                            }
+
                             return '-';
                         }),
                 ])->columns(3),
@@ -57,16 +59,17 @@ class SubmissionResource extends Resource
                             if ($form = Models\Form::with('fields')->find($get('form_id'))) {
                                 return $form->fields->map(function (Models\FormField $field) {
                                     return $field->type->getField($field)
-                                        ->statePath('values.' . $field->id)
+                                        ->statePath('values.'.$field->id)
                                         ->label($field->label)
                                         ->required($field->is_required)
                                         ->helperText($field->help_text)
                                         ->key($field->id);
                                 })->toArray();
                             }
+
                             return [];
                         }),
-                ])->columnSpan(['lg' => 2])->visible(fn($get) => $get('form_id') !== null),
+                ])->columnSpan(['lg' => 2])->visible(fn ($get) => $get('form_id') !== null),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Submission Details')
                         ->schema([
@@ -89,17 +92,17 @@ class SubmissionResource extends Resource
                             Forms\Components\TextInput::make('submitter_ip')
                                 ->label('Submitter IP')
                                 ->disabled()
-                                ->visible(fn(string $operation) => $operation === 'edit'),
+                                ->visible(fn (string $operation) => $operation === 'edit'),
                             Forms\Components\TextInput::make('user_agent')
                                 ->label('User Agent')
                                 ->disabled()
-                                ->visible(fn(string $operation) => $operation === 'edit'),
+                                ->visible(fn (string $operation) => $operation === 'edit'),
                             Forms\Components\DateTimePicker::make('created_at')
                                 ->label('Created At')
                                 ->disabled()
-                                ->visible(fn(string $operation) => $operation === 'edit'),
+                                ->visible(fn (string $operation) => $operation === 'edit'),
                         ]),
-                ])->visible(fn($get) => $get('form_id') !== null),
+                ])->visible(fn ($get) => $get('form_id') !== null),
             ]);
     }
 
@@ -132,17 +135,18 @@ class SubmissionResource extends Resource
                 Tables\Columns\TextColumn::make('values_count')
                     ->label('Fields Filled')
                     ->counts('values'),
-                AppComponents\Columns\CreatedAtColumn::make()
+                AppComponents\Columns\CreatedAtColumn::make(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('form_id')
                     ->label('Form')
                     ->relationship('form', 'name')
                     ->searchable()
-                    ->preload()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -22,7 +22,7 @@ class EditSubmission extends EditRecord
 
     protected function fillForm(): void
     {
-        $record = $this->getRecord();
+        $record = $this->getRecord()->load('values');
 
         $data = $record->toArray();
         $data['values'] = $record->values->mapWithKeys(function ($value) {
@@ -49,7 +49,7 @@ class EditSubmission extends EditRecord
         $upsertData = [];
         $idsToKeep = [];
         foreach ($values as $id => $value) {
-            if (!isset($fields[$id])) {
+            if (! isset($fields[$id])) {
                 continue;
             }
             // Ensure value is a string for DB storage
@@ -64,7 +64,7 @@ class EditSubmission extends EditRecord
             $idsToKeep[] = $id;
         }
 
-        if (!empty($upsertData)) {
+        if (! empty($upsertData)) {
             SubmissionValue::upsert(
                 $upsertData,
                 ['submission_id', 'form_field_id'],

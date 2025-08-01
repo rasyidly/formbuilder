@@ -3,14 +3,13 @@
 namespace App\Filament\Resources\FormResource\Concerns;
 
 use App\Models\FormField;
-use Illuminate\Support\Str;
 
 trait ManagesFormFields
 {
     /**
      * Upsert form fields for a form (create, update, soft delete removed fields)
-     * @param array $fieldsData Array of field data, each must have 'id' if updating
-     * @param int $formId
+     *
+     * @param  array  $fieldsData  Array of field data, each must have 'id' if updating
      */
     protected function upsertFormFields(array $fieldsData, int $formId): void
     {
@@ -21,7 +20,7 @@ trait ManagesFormFields
 
         // Soft delete fields that are not present in incoming data
         $toDelete = array_diff($existingIds, $incomingIds);
-        if (!empty($toDelete)) {
+        if (! empty($toDelete)) {
             FormField::whereIn('id', $toDelete)->delete();
         }
 
@@ -61,7 +60,7 @@ trait ManagesFormFields
                 'validation_rules' => $validationRules,
                 'conditional_logic' => null, // TODO: Implement conditional logic
                 'settings' => $settings,
-                'is_required' => $data['is_required'] ?? false
+                'is_required' => $data['is_required'] ?? false,
             ];
 
             if ($id) {
@@ -90,10 +89,10 @@ trait ManagesFormFields
             case 'number':
                 $validationRules[] = 'numeric';
                 if (isset($data['min'])) {
-                    $validationRules[] = 'min:' . $data['min'];
+                    $validationRules[] = 'min:'.$data['min'];
                 }
                 if (isset($data['max'])) {
-                    $validationRules[] = 'max:' . $data['max'];
+                    $validationRules[] = 'max:'.$data['max'];
                 }
                 break;
             case 'file':
@@ -102,23 +101,23 @@ trait ManagesFormFields
                     $mimes = is_array($data['accepted_file_types'])
                         ? implode(',', $data['accepted_file_types'])
                         : $data['accepted_file_types'];
-                    $validationRules[] = 'mimes:' . $mimes;
+                    $validationRules[] = 'mimes:'.$mimes;
                 }
                 if (isset($data['max_file_size'])) {
-                    $validationRules[] = 'max:' . ($data['max_file_size'] * 1024); // Convert MB to KB
+                    $validationRules[] = 'max:'.($data['max_file_size'] * 1024); // Convert MB to KB
                 }
                 break;
             case 'date':
                 $validationRules[] = 'date';
                 if (isset($data['min_date'])) {
-                    $validationRules[] = 'after_or_equal:' . $data['min_date'];
+                    $validationRules[] = 'after_or_equal:'.$data['min_date'];
                 }
                 if (isset($data['max_date'])) {
-                    $validationRules[] = 'before_or_equal:' . $data['max_date'];
+                    $validationRules[] = 'before_or_equal:'.$data['max_date'];
                 }
                 break;
             case 'time':
-                $validationRules[] = 'date_format:H:i' . (isset($data['seconds']) && $data['seconds'] ? ':s' : '');
+                $validationRules[] = 'date_format:H:i'.(isset($data['seconds']) && $data['seconds'] ? ':s' : '');
                 break;
         }
 

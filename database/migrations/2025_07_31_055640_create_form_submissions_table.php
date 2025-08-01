@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('submitter_ip')->nullable();
             $table->text('user_agent')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('submission_values', function (Blueprint $table) {

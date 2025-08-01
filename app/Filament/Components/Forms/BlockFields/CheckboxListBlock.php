@@ -32,13 +32,13 @@ class CheckboxListBlock
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
-                                if (!empty($state)) {
+                                if (! empty($state)) {
                                     $set('value', $state);
                                 }
                             }),
                         Forms\Components\TextInput::make('value')
                             ->key(null)
-                            ->label('Value')
+                            ->label('Value'),
                     ])
                     ->required()
                     ->minItems(1),
