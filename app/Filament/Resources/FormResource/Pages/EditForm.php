@@ -6,6 +6,7 @@ use App\Filament\Resources\FormResource;
 use App\Filament\Resources\FormResource\Concerns\ManagesFormFields;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Str;
 
 class EditForm extends EditRecord
 {
@@ -28,7 +29,7 @@ class EditForm extends EditRecord
         $fieldsData = [];
         foreach ($fields as $field) {
             $fieldData = [
-                'name' => $field->name,
+                'name' => Str::snake($field->label),
                 'label' => $field->label,
                 'placeholder' => $field->placeholder,
                 'help_text' => $field->help_text,

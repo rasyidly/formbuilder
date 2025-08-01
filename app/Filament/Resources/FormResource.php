@@ -33,8 +33,8 @@ class FormResource extends Resource
                                 ->required()
                                 ->maxLength(255)
                                 ->live(onBlur: true)
-                                ->afterStateUpdated(function ($set, $state, $context, $get) {
-                                    if ($context === 'create') {
+                                ->afterStateUpdated(function (Forms\Set $set, string $operation, Forms\Get $get) {
+                                    if ($operation === 'create') {
                                         $set('slug', Str::slug($get('name')));
                                     }
                                 }),

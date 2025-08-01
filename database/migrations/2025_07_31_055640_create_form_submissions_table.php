@@ -40,6 +40,8 @@ return new class extends Migration
             $table->json('files_metadata')->nullable(); // For file uploads: original name, path, size, etc.
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['form_field_id', 'submission_id']);
         });
     }
 

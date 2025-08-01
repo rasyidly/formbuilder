@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('form_fields', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Form::class)->constrained()->onDelete('cascade');
-            $table->integer('sequence')->default(0);
             $table->string('name'); // Field identifier/name
+            $table->integer('sequence')->default(0);
             $table->string('label'); // Display label
             $table->string('type'); // text, textarea, email, number, select, checkbox, radio, file, etc.
             $table->text('placeholder')->nullable();
@@ -28,6 +28,8 @@ return new class extends Migration
             $table->boolean('is_required')->default(false);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['form_id', 'name']);
         });
     }
 

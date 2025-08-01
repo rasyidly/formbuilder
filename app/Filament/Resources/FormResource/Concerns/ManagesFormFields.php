@@ -35,7 +35,7 @@ trait ManagesFormFields
         FormField::create([
             'form_id' => $this->record->id,
             'sequence' => $sequence,
-            'name' => Str::snake($data['name']),
+            'name' => Str::snake($data['label']),
             'label' => $data['label'],
             'type' => $fieldType,
             'placeholder' => $data['placeholder'] ?? null,
@@ -76,7 +76,7 @@ trait ManagesFormFields
         // Update the existing field
         $field->update([
             'sequence' => $sequence,
-            'name' => $data['name'],
+            'name' => Str::snake($data['label']),
             'label' => $data['label'],
             'type' => $fieldType,
             'placeholder' => $data['placeholder'] ?? null,
