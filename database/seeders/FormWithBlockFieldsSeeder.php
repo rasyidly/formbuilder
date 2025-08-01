@@ -95,13 +95,7 @@ class FormWithBlockFieldsSeeder extends Seeder
                 'type' => 'time', // Not in enum, but keeping for completeness. Consider removing if not supported.
                 'label' => 'Preferred Contact Time',
                 'is_required' => false,
-            ],
-            [
-                'type' => 'hidden',
-                'label' => 'Internal Reference',
-                'is_required' => false,
-                'settings' => ['default_value' => 'ref123'],
-            ],
+            ]
         ];
 
         foreach ($fields as $index => $field) {
