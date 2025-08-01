@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SubmissionResource\Pages;
 use App\Models;
 use App\Models\Submission;
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,63 +34,71 @@ class SubmissionResource extends Resource
                         ->required()
                         ->disabled(fn($context) => $context === 'edit')
                         ->preload()
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            $set('data', []);
-                        })
+                        ->live()
                         ->columnSpan(2),
                     Forms\Components\Placeholder::make('form_status')
                         ->label('Form Status')
                         ->content(function ($get) {
-                            $formId = $get('form_id');
-                            if (! $formId) {
-                                return '-';
-                            }
-                            $form = Models\Form::withTrashed()->find($formId);
-                            if (! $form) {
-                                return 'Form not found';
-                            }
-                            if ($form->trashed()) {
-                                return 'Deleted';
-                            }
-                            if ($form->archived_at) {
-                                return 'Archived';
-                            }
-                            if ($form->published_at) {
-                                return 'Published';
-                            }
-                            return 'Draft';
+                            if ($form = Models\Form::withTrashed()->find($get('form_id')))
+                                return match (true) {
+                                    $form->trashed() => 'Deleted',
+                                    (bool) $form->archived_at => 'Archived',
+                                    (bool) $form->published_at => 'Published',
+                                    default => 'Draft',
+                                };
+                            return '-';
                         }),
                 ])->columns(3),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Forms')
+                        ->label('Form Fields')
                         ->schema(function (callable $get) {
-                            $formId = $get('form_id');
-                            if (! $formId) {
-                                return [];
+                            if ($form = Models\Form::with('fields')->find($get('form_id'))) {
+                                return $form->fields->map(function (Models\FormField $field) {
+                                    return $field->type->getField($field)
+                                        ->statePath('values.' . $field->id)
+                                        ->label($field->label)
+                                        ->required($field->is_required)
+                                        ->helperText($field->help_text)
+                                        ->key($field->id);
+                                })->toArray();
                             }
-                            $form = Models\Form::with('fields')->find($formId);
-                            if (! $form) {
-                                return [];
-                            }
-                            return $form->fields->map(function (Models\FormField $field) {
-                                return $field->type->getField($field)
-                                    ->label($field->label)
-                                    ->required($field->is_required)
-                                    ->helperText($field->help_text)
-                                    ->default('');
-                            })->toArray();
+                            return [];
                         }),
-                ])->columnSpan(['lg' => 2]),
+                ])->columnSpan(['lg' => 2])->visible(fn($get) => $get('form_id') !== null),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Submission Details')
                         ->schema([
+                            Select::make('submitter_id')
+                                ->label('Submitter')
+                                ->helperText('Select a user if the submission is associated with a registered user.')
+                                ->relationship('submitter', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    $user = User::find($state);
+                                    $set('submitter_name', $user?->name);
+                                    $set('submitter_email', $user?->email);
+                                }),
+                            Forms\Components\TextInput::make('submitter_name')
+                                ->label('Submitter Name'),
+                            Forms\Components\TextInput::make('submitter_email')
+                                ->label('Submitter Email'),
+                            Forms\Components\TextInput::make('submitter_ip')
+                                ->label('Submitter IP')
+                                ->disabled()
+                                ->visible(fn($context) => $context === 'edit'),
+                            Forms\Components\TextInput::make('user_agent')
+                                ->label('User Agent')
+                                ->disabled()
+                                ->visible(fn($context) => $context === 'edit'),
                             Forms\Components\DateTimePicker::make('created_at')
                                 ->label('Created At')
                                 ->disabled()
                                 ->visible(fn($context) => $context === 'edit'),
                         ]),
-                ]),
+                ])->visible(fn($get) => $get('form_id') !== null),
             ]);
     }
 

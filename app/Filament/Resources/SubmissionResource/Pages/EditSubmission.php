@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
 use App\Filament\Resources\SubmissionResource;
+use App\Models\Form;
 use App\Models\Submission;
 use App\Models\SubmissionValue;
 use Filament\Actions;
@@ -19,6 +20,20 @@ class EditSubmission extends EditRecord
         ];
     }
 
+    protected function fillForm(): void
+    {
+        $record = $this->getRecord();
+
+        $data = $record->toArray();
+        $data['values'] = $record->values->mapWithKeys(function ($value) {
+            return [
+                $value->form_field_id => $value->value,
+            ];
+        })->toArray();
+
+        $this->form->fill($data);
+    }
+
     protected function handleRecordUpdate($record, array $data): Submission
     {
         $values = $data['values'] ?? [];
@@ -27,18 +42,41 @@ class EditSubmission extends EditRecord
         // Update the submission
         $record->update($data);
 
-        // Delete existing values and recreate them
-        $record->values()->delete();
+        // Get form fields info
+        $fields = Form::find($record->form_id)->fields->keyBy('id');
 
-        // Create new submission values
-        foreach ($values as $valueData) {
-            SubmissionValue::create([
+        // Prepare upsert data
+        $upsertData = [];
+        $idsToKeep = [];
+        foreach ($values as $id => $value) {
+            if (!isset($fields[$id])) {
+                continue;
+            }
+            // Ensure value is a string for DB storage
+            $storedValue = is_array($value) ? json_encode($value) : $value;
+            $upsertData[] = [
                 'submission_id' => $record->id,
-                'form_field_id' => $valueData['form_field_id'],
-                'field_label' => $valueData['field_label'],
-                'field_type' => $valueData['field_type'],
-                'value' => $valueData['value'],
-            ]);
+                'form_field_id' => $id,
+                'field_label' => $fields[$id]->label,
+                'field_type' => $fields[$id]->type,
+                'value' => $storedValue,
+            ];
+            $idsToKeep[] = $id;
+        }
+
+        if (!empty($upsertData)) {
+            SubmissionValue::upsert(
+                $upsertData,
+                ['submission_id', 'form_field_id'],
+                ['field_label', 'field_type', 'value']
+            );
+            // Delete stale values
+            SubmissionValue::where('submission_id', $record->id)
+                ->whereNotIn('form_field_id', $idsToKeep)
+                ->delete();
+        } else {
+            // If no values, delete all
+            SubmissionValue::where('submission_id', $record->id)->delete();
         }
 
         return $record;

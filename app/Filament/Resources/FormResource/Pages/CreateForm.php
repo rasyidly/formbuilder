@@ -24,4 +24,9 @@ class CreateForm extends CreateRecord
         $fields = array_values($this->data['fields'] ?? []);
         $this->upsertFormFields($fields, $this->record->id);
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
 }

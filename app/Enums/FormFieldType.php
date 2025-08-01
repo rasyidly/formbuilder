@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use App\Models\FormField;
 use Filament\Forms\Components;
 
 enum FormFieldType: string
@@ -21,7 +22,7 @@ enum FormFieldType: string
     case Image = 'image';
     case Hidden = 'hidden';
 
-    public function getField(\App\Models\FormField $formField): Components\Component
+    public function getField(FormField $formField): Components\Component
     {
         return match ($this) {
             self::Text => Components\TextInput::make($formField->id)
