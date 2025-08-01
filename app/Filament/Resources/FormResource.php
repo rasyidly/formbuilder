@@ -2,18 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\Forms\BlockFields\FormBlockRegistry;
 use App\Filament\Resources\FormResource\Pages;
-use App\Filament\Resources\FormResource\RelationManagers;
 use App\Models\Form as FormModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class FormResource extends Resource
 {
@@ -44,34 +42,23 @@ class FormResource extends Resource
                                 ->required()
                                 ->unique(ignoreRecord: true)
                                 ->maxLength(255),
-                            Forms\Components\Textarea::make('description')
-                                ->maxLength(65535)
+                        ]),
+                    Forms\Components\Section::make('Description')
+                        ->collapsed()
+                        ->schema([
+                            Forms\Components\RichEditor::make('description')
+                                ->hiddenLabel()
+                                ->maxLength(10000),
                         ]),
                     Forms\Components\Section::make('Fields')
                         ->schema([
                             Forms\Components\Builder::make('fields')
-                                ->blocks([
-                                    // [TODO]
-                                    Forms\Components\Builder\Block::make('Text Field')
-                                        ->schema([
-                                            Forms\Components\TextInput::make('name')
-                                                ->required()
-                                                ->maxLength(255),
-                                            Forms\Components\TextInput::make('label')
-                                                ->required()
-                                                ->maxLength(255),
-                                            Forms\Components\Select::make('type')
-                                                ->options([
-                                                    'text' => 'Text',
-                                                    'textarea' => 'Textarea',
-                                                    'select' => 'Select',
-                                                    'checkbox' => 'Checkbox',
-                                                ])
-                                                ->default('text')
-                                                ->required(),
-                                        ]),
-                                ]),
-                        ])
+                                ->blocks(FormBlockRegistry::getAllBlocks())
+                                ->addActionLabel('Add Field')
+                                ->reorderable()
+                                ->collapsible()
+                                ->hiddenLabel(),
+                        ]),
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Configuration')
@@ -88,7 +75,7 @@ class FormResource extends Resource
                                 ->default(fn() => Auth::id())
                                 ->required(),
                         ]),
-                ])
+                ]),
             ]);
     }
 
@@ -101,9 +88,6 @@ class FormResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('creator.name')
                     ->label('Created By')
@@ -119,15 +103,11 @@ class FormResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                    ]),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

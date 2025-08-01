@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->json('settings')->nullable();
-            $table->string('status')->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->timestamp('archived_at')->nullable();
             $table->foreignIdFor(User::class, 'created_by')->constrained()->cascadeOnDelete();

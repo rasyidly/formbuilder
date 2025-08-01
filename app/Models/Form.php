@@ -17,7 +17,6 @@ class Form extends Model
         'slug',
         'description',
         'settings',
-        'status',
         'published_at',
         'archived_at',
         'created_by',
@@ -66,7 +65,7 @@ class Form extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')->whereNotNull('published_at');
+        return $query->whereNotNull('published_at');
     }
 
     /**
@@ -74,7 +73,7 @@ class Form extends Model
      */
     public function scopeDraft($query)
     {
-        return $query->where('status', 'draft');
+        return $query->whereNull('published_at')->whereNull('archived_at');
     }
 
     /**
@@ -90,7 +89,7 @@ class Form extends Model
      */
     public function isPublished(): bool
     {
-        return $this->status === 'published' && $this->published_at !== null;
+        return $this->published_at !== null;
     }
 
     /**
@@ -107,7 +106,6 @@ class Form extends Model
     public function publish(): void
     {
         $this->update([
-            'status' => 'published',
             'published_at' => now(),
         ]);
     }

@@ -70,6 +70,7 @@ class SubmissionValue extends Model
     public function getOriginalFilename(): ?string
     {
         $metadata = $this->getFileMetadata();
+
         return $metadata['original_name'] ?? null;
     }
 
@@ -79,6 +80,7 @@ class SubmissionValue extends Model
     public function getFileSize(): ?int
     {
         $metadata = $this->getFileMetadata();
+
         return $metadata['size'] ?? null;
     }
 
@@ -88,6 +90,7 @@ class SubmissionValue extends Model
     public function getFilePath(): ?string
     {
         $metadata = $this->getFileMetadata();
+
         return $metadata['path'] ?? $this->value;
     }
 

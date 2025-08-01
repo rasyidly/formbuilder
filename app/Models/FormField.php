@@ -90,7 +90,7 @@ class FormField extends Model
      */
     public function hasOptions(): bool
     {
-        return in_array($this->type, ['select', 'radio', 'checkbox']) && !empty($this->options);
+        return in_array($this->type, ['select', 'radio', 'checkbox']) && ! empty($this->options);
     }
 
     /**
@@ -112,7 +112,7 @@ class FormField extends Model
      */
     public function getOptionsArray(): array
     {
-        if (!$this->hasOptions()) {
+        if (! $this->hasOptions()) {
             return [];
         }
 
