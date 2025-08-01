@@ -24,10 +24,14 @@ class Submission extends Model
         'user_agent',
     ];
 
-    protected $casts = [
-        'status' => SubmissionStatus::class,
-        'metadata' => 'array',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => SubmissionStatus::class,
+            'metadata' => 'array',
+        ];
+    }
 
     /**
      * Get the form that this submission belongs to.
@@ -119,13 +123,13 @@ class Submission extends Model
     }
 
     /**
-     * Get the submission data as an array of field_name => value.
+     * Get the submission data as an array of field_label => value.
      */
     public function getSubmissionData(): array
     {
         return $this->values()
             ->get()
-            ->pluck('value', 'field_name')
+            ->pluck('value', 'field_label')
             ->toArray();
     }
 
@@ -135,7 +139,7 @@ class Submission extends Model
     public function getFieldValue(string $fieldName): mixed
     {
         $value = $this->values()
-            ->where('field_name', $fieldName)
+            ->where('field_label', $fieldName)
             ->first();
 
         return $value ? $value->value : null;

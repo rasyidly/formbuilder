@@ -22,11 +22,14 @@ class Form extends Model
         'created_by',
     ];
 
-    protected $casts = [
-        'settings' => 'array',
-        'published_at' => 'datetime',
-        'archived_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'array',
+            'published_at' => 'datetime',
+            'archived_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user who created this form.

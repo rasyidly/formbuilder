@@ -35,7 +35,7 @@ class EditSubmission extends EditRecord
             SubmissionValue::create([
                 'submission_id' => $record->id,
                 'form_field_id' => $valueData['form_field_id'],
-                'field_name' => $valueData['field_name'],
+                'field_label' => $valueData['field_label'],
                 'field_type' => $valueData['field_type'],
                 'value' => $valueData['value'],
             ]);

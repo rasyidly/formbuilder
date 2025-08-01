@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('settings')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('archived_at')->nullable();
-            $table->foreignIdFor(User::class, 'created_by')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'created_by')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -24,7 +24,7 @@ class CreateSubmission extends CreateRecord
             SubmissionValue::create([
                 'submission_id' => $submission->id,
                 'form_field_id' => $valueData['form_field_id'],
-                'field_name' => $valueData['field_name'],
+                'field_label' => $valueData['field_label'],
                 'field_type' => $valueData['field_type'],
                 'value' => $valueData['value'],
             ]);

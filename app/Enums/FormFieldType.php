@@ -2,21 +2,16 @@
 
 namespace App\Enums;
 
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components;
 
 enum FormFieldType: string
 {
     case Text = 'text';
     case Email = 'email';
     case Number = 'number';
+    case Date = 'date';
+    case Time = 'time';
+    case DateTime = 'datetime';
     case Textarea = 'textarea';
     case Select = 'select';
     case Radio = 'radio';
@@ -26,67 +21,85 @@ enum FormFieldType: string
     case Image = 'image';
     case Hidden = 'hidden';
 
-    public function getField(\App\Models\FormField $formField): Component
+    public function getField(\App\Models\FormField $formField): Components\Component
     {
         return match ($this) {
-            self::Text => TextInput::make($formField->id)
+            self::Text => Components\TextInput::make($formField->id)
                 ->label($formField->label)
                 ->placeholder($formField->placeholder)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::Email => TextInput::make($formField->id)
+            self::Email => Components\TextInput::make($formField->id)
                 ->label($formField->label)
                 ->email()
                 ->placeholder($formField->placeholder)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::Number => TextInput::make($formField->id)
+            self::Number => Components\TextInput::make($formField->id)
                 ->label($formField->label)
                 ->numeric()
                 ->placeholder($formField->placeholder)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::Textarea => Textarea::make($formField->id)
+            self::Textarea => Components\Textarea::make($formField->id)
                 ->label($formField->label)
                 ->placeholder($formField->placeholder)
                 ->helperText($formField->help_text)
                 ->rows(3)
                 ->required($formField->is_required),
 
-            self::Select => Select::make($formField->id)
+            self::Select => Components\Select::make($formField->id)
                 ->label($formField->label)
                 ->options($formField->getOptionsArray())
                 ->placeholder($formField->placeholder)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::Radio => Radio::make($formField->id)
+            self::Radio => Components\Radio::make($formField->id)
                 ->label($formField->label)
                 ->options($formField->getOptionsArray())
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::Checkbox => Checkbox::make($formField->id)
+            self::Checkbox => Components\Checkbox::make($formField->id)
                 ->label($formField->label)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::CheckboxList => CheckboxList::make($formField->id)
+            self::CheckboxList => Components\CheckboxList::make($formField->id)
                 ->label($formField->label)
                 ->options($formField->getOptionsArray())
                 ->helperText($formField->help_text)
                 ->required($formField->is_required),
 
-            self::File, self::Image => FileUpload::make($formField->id)
+            self::File, self::Image => Components\FileUpload::make($formField->id)
                 ->label($formField->label)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required)
                 ->when($this === self::Image, fn($component) => $component->image()),
 
-            self::Hidden => Hidden::make($formField->id)
+            self::Date => Components\DatePicker::make($formField->id)
+                ->label($formField->label)
+                ->placeholder($formField->placeholder)
+                ->helperText($formField->help_text)
+                ->required($formField->is_required),
+
+            self::Time => Components\TimePicker::make($formField->id)
+                ->label($formField->label)
+                ->placeholder($formField->placeholder)
+                ->helperText($formField->help_text)
+                ->required($formField->is_required),
+
+            self::DateTime => Components\DateTimePicker::make($formField->id)
+                ->label($formField->label)
+                ->placeholder($formField->placeholder)
+                ->helperText($formField->help_text)
+                ->required($formField->is_required),
+
+            self::Hidden => Components\Hidden::make($formField->id)
                 ->default($formField->settings['default_value'] ?? ''),
         };
     }
@@ -97,6 +110,9 @@ enum FormFieldType: string
             self::Text => 'Text Input',
             self::Email => 'Email Input',
             self::Number => 'Number Input',
+            self::Date => 'Date Input',
+            self::Time => 'Time Input',
+            self::DateTime => 'Datetime Input',
             self::Textarea => 'Textarea',
             self::Select => 'Select Dropdown',
             self::Radio => 'Radio Buttons',

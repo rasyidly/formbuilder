@@ -107,7 +107,7 @@ class SubmissionResource extends Resource
                 Tables\Columns\TextColumn::make('values_preview')
                     ->label('Preview')
                     ->getStateUsing(function ($record) {
-                        return $record->values->map(fn($v) => $v->field_name . ': ' . $v->getDisplayValue())->implode(', ');
+                        return $record->values->map(fn($v) => $v->field_label . ': ' . $v->getDisplayValue())->implode(', ');
                     })
                     ->limit(50),
             ])

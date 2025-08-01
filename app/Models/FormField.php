@@ -27,14 +27,17 @@ class FormField extends Model
         'is_required'
     ];
 
-    protected $casts = [
-        'type' => FormFieldType::class,
-        'options' => 'array',
-        'validation_rules' => 'array',
-        'conditional_logic' => 'array',
-        'settings' => 'array',
-        'is_required' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => FormFieldType::class,
+            'options' => 'array',
+            'validation_rules' => 'array',
+            'conditional_logic' => 'array',
+            'settings' => 'array',
+            'is_required' => 'boolean'
+        ];
+    }
 
     /**
      * Get the form that owns this field.

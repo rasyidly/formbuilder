@@ -15,16 +15,20 @@ class SubmissionValue extends Model
     protected $fillable = [
         'form_field_id',
         'submission_id',
-        'field_name',
+        'field_label',
         'field_type',
         'value',
         'files_metadata',
     ];
 
-    protected $casts = [
-        'field_type' => FormFieldType::class,
-        'files_metadata' => 'array',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'field_type' => FormFieldType::class,
+            'files_metadata' => 'array',
+        ];
+    }
 
     /**
      * Get the form field that this value belongs to.
@@ -47,7 +51,7 @@ class SubmissionValue extends Model
      */
     public function scopeFiles($query)
     {
-        return $query->whereIn('field_type', [FormFieldType::FILE->value, FormFieldType::IMAGE->value]);
+        return $query->whereIn('field_type', [FormFieldType::File->value, FormFieldType::IMAGE->value]);
     }
 
     /**
@@ -105,7 +109,7 @@ class SubmissionValue extends Model
             return $this->getOriginalFilename() ?? $this->value ?? 'File uploaded';
         }
 
-        if ($this->field_type === FormFieldType::CHECKBOX && is_array($this->value)) {
+        if ($this->field_type === FormFieldType::CheckboxList && is_array($this->value)) {
             return implode(', ', $this->value);
         }
 
@@ -118,8 +122,8 @@ class SubmissionValue extends Model
     public function getRawValue(): mixed
     {
         return match ($this->field_type) {
-            FormFieldType::NUMBER => is_numeric($this->value) ? (float) $this->value : $this->value,
-            FormFieldType::CHECKBOX => is_string($this->value) ? json_decode($this->value, true) : $this->value,
+            FormFieldType::Number => is_numeric($this->value) ? (float) $this->value : $this->value,
+            FormFieldType::CheckboxList => is_string($this->value) ? json_decode($this->value, true) : $this->value,
             default => $this->value,
         };
     }
