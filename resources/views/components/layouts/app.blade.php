@@ -10,8 +10,8 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <title>{{ config('app.name', $title ?? 'Page Title') }}</title>
-    @vite(['resources/css/app.css'])
     @filamentStyles
+    @vite(['resources/css/app.css'])
 </head>
 
 <body class="dark:bg-neutral-900 dark:text-neutral-100">
