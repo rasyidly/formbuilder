@@ -3,6 +3,7 @@
 namespace App\Livewire\Components;
 
 use App\Models;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms;
@@ -24,24 +25,88 @@ class Form extends Component implements HasForms
 
     public function form(Forms\Form $form): Forms\Form
     {
+        $requiredFields = [];
+
+        if ($this->model && ($this->model->settings['require_name_input'] ?? false)) {
+            $requiredFields[] = Forms\Components\TextInput::make('name')
+                ->label(__('Name'))
+                ->required()
+                ->helperText(null);
+        }
+
+        if ($this->model && ($this->model->settings['require_email_input'] ?? false)) {
+            $requiredFields[] = Forms\Components\TextInput::make('email')
+                ->label(__('Email'))
+                ->email()
+                ->required()
+                ->helperText(null);
+        }
+
         return $form
             ->columns(1)
             ->statePath('data')
-            ->schema(
-                $this->model?->fields->map(function (Models\FormField $field) {
+            ->schema([
+                ...$requiredFields,
+                ...($this->model?->fields->map(function (Models\FormField $field) {
                     return $field->type->getField($field)
                         ->statePath('values.' . $field->id)
                         ->label($field->label)
                         ->required($field->is_required)
                         ->helperText($field->help_text)
                         ->key($field->id);
-                })->toArray() ?? []
-            );
+                })->toArray() ?? [])
+            ]);
     }
 
     public function create(): void
     {
-        dd($this->form->getState());
+        $data = $this->form->getState();
+
+        // Validation (Filament handles this via form schema, but you can add extra if needed)
+
+        $values = $data['values'] ?? [];
+        unset($data['values']);
+
+        // Handle submitter_name and submitter_email if required by settings
+        if ($this->model && ($this->model->settings['require_name_input'] ?? false)) {
+            $data['submitter_name'] = $this->data['name'] ?? null;
+        }
+        if ($this->model && ($this->model->settings['require_email_input'] ?? false)) {
+            $data['submitter_email'] = $this->data['email'] ?? null;
+        }
+
+        $data['form_id'] = $this->model->id;
+        $data['submitter_ip'] = request()->ip();
+        $data['user_agent'] = request()->userAgent();
+
+        DB::beginTransaction();
+        try {
+            $submission = Models\Submission::create($data);
+
+            $fields = $this->model->fields->keyBy('id');
+
+            $submissionValues = [];
+            foreach ($values as $id => $value) {
+                $submissionValues[] = [
+                    'submission_id' => $submission->id,
+                    'form_field_id' => $id,
+                    'field_label' => $fields[$id]->label,
+                    'field_type' => $fields[$id]->type,
+                    'value' => is_array($value) ? json_encode($value) : $value,
+                ];
+            }
+
+            Models\SubmissionValue::query()->insert($submissionValues);
+
+            DB::commit();
+            session()->flash('success', 'Submission saved successfully!');
+            // Optionally, reset form or redirect
+            $this->reset('data');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            session()->flash('error', 'Failed to save submission.');
+            throw $e;
+        }
     }
 
     public function render()

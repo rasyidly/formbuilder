@@ -16,27 +16,19 @@ class FormWithBlockFieldsSeeder extends Seeder
             'name' => 'Sample Form with All Block Fields',
             'description' => 'A form containing all block field types.',
             'published_at' => now(),
+            'settings' => [
+                'require_name_input' => true,
+                'require_email_input' => true,
+            ]
         ]);
 
         // Prepare all fields
         $fields = [
             [
-                'type' => 'text',
-                'label' => 'Name',
-                'is_required' => true,
-                'placeholder' => 'Enter your name',
-            ],
-            [
                 'type' => 'textarea',
                 'label' => 'Bio',
                 'is_required' => false,
                 'placeholder' => 'Tell us about yourself',
-            ],
-            [
-                'type' => 'email',
-                'label' => 'Email',
-                'is_required' => true,
-                'placeholder' => 'Enter your email address',
             ],
             [
                 'type' => 'number',
