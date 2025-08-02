@@ -14,7 +14,7 @@
     @vite(['resources/css/app.css'])
 </head>
 
-<body class="dark:bg-neutral-900 dark:text-neutral-100">
+<body class="bg-neutral-50 dark:bg-neutral-900 dark:text-neutral-100">
     <main>
         {{ $slot }}
     </main>

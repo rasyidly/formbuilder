@@ -80,7 +80,7 @@ enum FormFieldType: string
                 ->label($formField->label)
                 ->helperText($formField->help_text)
                 ->required($formField->is_required)
-                ->when($this === self::Image, fn ($component) => $component->image()),
+                ->when($this === self::Image, fn($component) => $component->image()),
 
             self::Date => Components\DatePicker::make($formField->id)
                 ->label($formField->label)
@@ -138,7 +138,7 @@ enum FormFieldType: string
     public static function getOptions(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])
+            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])
             ->toArray();
     }
 }
