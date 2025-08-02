@@ -29,6 +29,8 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['id', 'form_id']);
         });
 
         Schema::create('submission_values', function (Blueprint $table) {

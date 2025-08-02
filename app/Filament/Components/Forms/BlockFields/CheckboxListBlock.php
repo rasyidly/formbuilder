@@ -12,6 +12,7 @@ class CheckboxListBlock
             ->label('Checkbox List')
             ->icon('heroicon-o-check-circle')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()
@@ -33,7 +34,7 @@ class CheckboxListBlock
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (! empty($state)) {
-                                    $set('value', $state);
+                                    $set('value', str($state)->slug());
                                 }
                             }),
                         Forms\Components\TextInput::make('value')

@@ -10,8 +10,9 @@ class TextareaBlock
     {
         return Forms\Components\Builder\Block::make('textarea')
             ->label('Textarea')
-            ->icon('heroicon-m-document-text')
+            ->icon('heroicon-o-document-text')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

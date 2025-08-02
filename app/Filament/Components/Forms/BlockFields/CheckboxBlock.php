@@ -10,8 +10,9 @@ class CheckboxBlock
     {
         return Forms\Components\Builder\Block::make('checkbox')
             ->label('Checkbox')
-            ->icon('heroicon-m-check')
+            ->icon('heroicon-o-check')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->hidden()

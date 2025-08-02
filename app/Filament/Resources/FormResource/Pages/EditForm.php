@@ -40,6 +40,7 @@ class EditForm extends EditRecord
         $fieldsData = [];
         foreach ($fields as $field) {
             $fieldData = [
+                'id' => $field->id,
                 'name' => Str::snake($field->label),
                 'label' => $field->label,
                 'placeholder' => $field->placeholder,

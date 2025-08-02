@@ -10,8 +10,9 @@ class NumberBlock
     {
         return Forms\Components\Builder\Block::make('number')
             ->label('Number')
-            ->icon('heroicon-m-hashtag')
+            ->icon('heroicon-o-hashtag')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

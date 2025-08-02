@@ -10,7 +10,7 @@ class HiddenBlock
     {
         return Forms\Components\Builder\Block::make('hidden')
             ->label('Hidden Field')
-            ->icon('heroicon-m-eye-slash')
+            ->icon('heroicon-o-eye-slash')
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')

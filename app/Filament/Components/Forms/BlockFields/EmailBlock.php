@@ -10,8 +10,9 @@ class EmailBlock
     {
         return Forms\Components\Builder\Block::make('email')
             ->label('Email')
-            ->icon('heroicon-m-envelope')
+            ->icon('heroicon-o-envelope')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

@@ -10,8 +10,9 @@ class SelectBlock
     {
         return Forms\Components\Builder\Block::make('select')
             ->label('Select Dropdown')
-            ->icon('heroicon-m-chevron-down')
+            ->icon('heroicon-o-chevron-up-down')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()
@@ -24,6 +25,7 @@ class SelectBlock
                     ->rows(2),
                 Forms\Components\Repeater::make('options')
                     ->label('Options')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('label')
                             ->key(null)
@@ -32,7 +34,7 @@ class SelectBlock
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (! empty($state)) {
-                                    $set('value', $state);
+                                    $set('value', str($state)->slug());
                                 }
                             }),
                         Forms\Components\TextInput::make('value')

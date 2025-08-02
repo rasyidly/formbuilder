@@ -10,8 +10,9 @@ class TimeBlock
     {
         return Forms\Components\Builder\Block::make('time')
             ->label('Time Picker')
-            ->icon('heroicon-m-clock')
+            ->icon('heroicon-o-clock')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

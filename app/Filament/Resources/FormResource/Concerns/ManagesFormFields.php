@@ -6,28 +6,19 @@ use App\Models\FormField;
 
 trait ManagesFormFields
 {
-    /**
-     * Upsert form fields for a form (create, update, soft delete removed fields)
-     *
-     * @param  array  $fieldsData  Array of field data, each must have 'id' if updating
-     */
     protected function upsertFormFields(array $fieldsData, int $formId): void
     {
-        // Get all current field ids for this form
+        // Get all current fields for this form
         $existingFields = FormField::where('form_id', $formId)->get();
-        $existingIds = $existingFields->pluck('id')->toArray();
-        $incomingIds = collect($fieldsData)->pluck('id')->filter()->toArray();
+        $existingFieldsById = $existingFields->keyBy('id');
+        $processedIds = [];
 
-        // Soft delete fields that are not present in incoming data
-        $toDelete = array_diff($existingIds, $incomingIds);
-        if (! empty($toDelete)) {
-            FormField::whereIn('id', $toDelete)->delete();
-        }
 
         foreach ($fieldsData as $sequence => $fieldData) {
             $fieldType = $fieldData['type'];
             $data = $fieldData['data'];
-            $id = $fieldData['id'] ?? null;
+            $id = $fieldData['data']['id'] ?? null;
+
 
             // Prepare options for fields that support them
             $options = null;
@@ -63,20 +54,27 @@ trait ManagesFormFields
                 'is_required' => $data['is_required'] ?? false,
             ];
 
-            if ($id) {
-                // Update existing field
-                $field = FormField::find($id);
-                if ($field) {
-                    $field->update($fieldPayload);
-                    // Restore if soft deleted
-                    if (method_exists($field, 'restore') && $field->trashed()) {
-                        $field->restore();
-                    }
+            if ($id && isset($existingFieldsById[$id]) && $existingFieldsById[$id]->form_id == $formId) {
+                // Update existing field (only if it belongs to this form)
+                $field = $existingFieldsById[$id];
+                $field->update($fieldPayload);
+                // Restore if soft deleted
+                if (method_exists($field, 'restore') && $field->trashed()) {
+                    $field->restore();
                 }
-            } else {
-                // Create new field
-                FormField::create($fieldPayload);
+                $processedIds[] = $field->id;
+            } elseif (!$id) {
+                // Create new field (no id means new)
+                $newField = FormField::create($fieldPayload);
+                $processedIds[] = $newField->id;
             }
+            // If $id is set but not found in $existingFieldsById, skip (do not create new with that id)
+        }
+
+        // Soft delete fields that were not processed (not present in incoming data)
+        $toDelete = $existingFields->pluck('id')->diff($processedIds)->all();
+        if (!empty($toDelete)) {
+            FormField::whereIn('id', $toDelete)->delete();
         }
     }
 

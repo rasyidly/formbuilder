@@ -10,8 +10,9 @@ class RadioBlock
     {
         return Forms\Components\Builder\Block::make('radio')
             ->label('Radio Buttons')
-            ->icon('heroicon-m-radio')
+            ->icon('heroicon-o-stop-circle')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()
@@ -24,6 +25,7 @@ class RadioBlock
                     ->rows(2),
                 Forms\Components\Repeater::make('options')
                     ->label('Options')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('label')
                             ->key(null)
@@ -32,7 +34,7 @@ class RadioBlock
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (! empty($state)) {
-                                    $set('value', $state);
+                                    $set('value', str($state)->slug());
                                 }
                             }),
                         Forms\Components\TextInput::make('value')

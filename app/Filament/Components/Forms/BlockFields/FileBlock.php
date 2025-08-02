@@ -10,8 +10,9 @@ class FileBlock
     {
         return Forms\Components\Builder\Block::make('file')
             ->label('File Upload')
-            ->icon('heroicon-m-document-arrow-up')
+            ->icon('heroicon-o-document-arrow-up')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

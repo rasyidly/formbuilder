@@ -55,9 +55,14 @@ class FormResource extends Resource
                             Forms\Components\Builder::make('fields')
                                 ->blocks(AppComponents\Forms\BlockFields\FormBlockRegistry::getAllBlocks())
                                 ->addActionLabel('Add Field')
+                                ->blockIcons()
                                 ->reorderable()
                                 ->collapsible()
-                                ->hiddenLabel(),
+                                ->blockNumbers(false)
+                                ->hiddenLabel()
+                                ->cloneable()
+                                ->blockPickerColumns(['lg' => 2])
+                                ->minItems(1),
                         ]),
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make([

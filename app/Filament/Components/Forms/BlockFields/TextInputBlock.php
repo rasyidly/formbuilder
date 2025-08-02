@@ -10,8 +10,9 @@ class TextInputBlock
     {
         return Forms\Components\Builder\Block::make('text')
             ->label('Text Input')
-            ->icon('heroicon-m-pencil')
+            ->icon('heroicon-o-pencil')
             ->schema([
+                Forms\Components\Hidden::make('id'),
                 Forms\Components\TextInput::make('name')
                     ->label('Field Name')
                     ->required()

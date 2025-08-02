@@ -18,6 +18,7 @@ class FormBlockRegistry
             FileBlock::make(),
             DateBlock::make(),
             TimeBlock::make(),
+            DateTimeBlock::make(),
             HiddenBlock::make(),
         ];
     }
