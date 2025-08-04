@@ -27,24 +27,10 @@ class Form extends Component implements HasForms
     {
         $requiredFields = [];
 
-        if ($this->model && ($this->model->settings['require_name_input'] ?? false)) {
-            $requiredFields[] = Forms\Components\TextInput::make('name')
-                ->label(__('Name'))
-                ->required()
-                ->helperText(null);
-        }
-
-        if ($this->model && ($this->model->settings['require_email_input'] ?? false)) {
-            $requiredFields[] = Forms\Components\TextInput::make('email')
-                ->label(__('Email'))
-                ->email()
-                ->required()
-                ->helperText(null);
-        }
-
         return $form
             ->columns(1)
             ->statePath('data')
+            ->columns(6)
             ->schema([
                 ...$requiredFields,
                 ...($this->model?->fields->map(function (Models\FormField $field) {
@@ -53,7 +39,9 @@ class Form extends Component implements HasForms
                         ->label($field->label)
                         ->required($field->is_required)
                         ->helperText($field->help_text)
-                        ->key($field->id);
+                        ->key($field->id)
+                        ->columnSpan($field->settings['col_span'] ?? 'full')
+                        ->columnStart($field->settings['col_start'] ?? 1);
                 })->toArray() ?? [])
             ]);
     }

@@ -43,13 +43,6 @@ class FormResource extends Resource
                                 ->unique(ignoreRecord: true)
                                 ->maxLength(255),
                         ]),
-                    Forms\Components\Section::make('Description')
-                        ->collapsed()
-                        ->schema([
-                            Forms\Components\RichEditor::make('description')
-                                ->hiddenLabel()
-                                ->maxLength(10000),
-                        ]),
                     Forms\Components\Section::make('Fields')
                         ->schema([
                             Forms\Components\Builder::make('fields')
@@ -69,22 +62,14 @@ class FormResource extends Resource
                     Forms\Components\Section::make('Publication')->schema([
                         Forms\Components\DateTimePicker::make('published_at')
                             ->label('Published At')
-                            ->helperText('Set a date to publish the form automatically')
+                            ->helperText('Set a date to publish the form, or leave empty to keep it as a draft.')
                             ->nullable(),
                     ]),
-                    Forms\Components\Section::make('Configuration')
+                    Forms\Components\Section::make('Description')
                         ->schema([
-                            Forms\Components\Toggle::make('settings.require_name_input')
-                                ->label('Collect submitter name'),
-                            Forms\Components\Toggle::make('settings.require_email_input')
-                                ->label('Collect submitter email'),
-                            Forms\Components\DateTimePicker::make('archived_at')
-                                ->label('Archived At')
-                                ->nullable(),
-                            Forms\Components\Select::make('created_by')
-                                ->relationship('creator', 'name')
-                                ->searchable()
-                                ->default(fn() => Auth::id()),
+                            Forms\Components\RichEditor::make('description')
+                                ->hiddenLabel()
+                                ->maxLength(10000),
                         ]),
                 ]),
             ]);
