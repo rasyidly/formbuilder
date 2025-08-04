@@ -3,7 +3,7 @@
         <h1 class="mb-2 text-2xl font-bold">{{ $form->name }}</h1>
         @if($form->description)
         <div class="prose dark:prose-invert">
-            {{ $form->description }}
+            {!! $form->description !!}
         </div>
         @endif
     </x-filament::section>
