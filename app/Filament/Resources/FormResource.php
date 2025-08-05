@@ -60,10 +60,10 @@ class FormResource extends Resource
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Publication')->schema([
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->label('Published At')
-                            ->helperText('Set a date to publish the form, or leave empty to keep it as a draft.')
-                            ->nullable(),
+                        Forms\Components\Toggle::make('published_at')
+                            ->label('Mark form as published and accessible')
+                            ->default(true)
+                            ->reactive()
                     ]),
                     Forms\Components\Section::make('Description')
                         ->schema([

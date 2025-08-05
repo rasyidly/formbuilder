@@ -75,6 +75,8 @@ class EditForm extends EditRecord
         // Remove fields from form data as they will be saved separately
         unset($data['fields']);
 
+        $data['published_at'] = $data['published_at'] ? now() : null;
+
         return $data;
     }
 

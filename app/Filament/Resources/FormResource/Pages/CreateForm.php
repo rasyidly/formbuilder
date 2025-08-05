@@ -16,6 +16,8 @@ class CreateForm extends CreateRecord
     {
         unset($data['fields']);
 
+        $data['published_at'] = $data['published_at'] ? now() : null;
+
         return $data;
     }
 
