@@ -5,7 +5,7 @@
         @if (session('success'))
         <x-filament::button disabled>{{ session('success') }}</x-filament::button>
         @else
-        <x-filament::button type="submit">{{ __('Submit') }}</x-filament::button>
+        <x-filament::button type="submit" wire:loading.attr="disabled">Submit</x-filament::button>
         @endif
 
     </form>

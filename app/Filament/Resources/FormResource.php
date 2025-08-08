@@ -63,7 +63,18 @@ class FormResource extends Resource
                         Forms\Components\Toggle::make('published_at')
                             ->label('Mark form as published and accessible')
                             ->default(true)
-                            ->reactive()
+                            ->reactive(),
+                    ]),
+                    Forms\Components\Section::make('Receiving emails')->schema([
+                        Forms\Components\Repeater::make('settings.recipient_emails')
+                            ->label('Email addresses to receive form submissions')
+                            ->addActionLabel('Add recipient email')
+                            ->simple(
+                                Forms\Components\TextInput::make('email')
+                                    ->placeholder('Enter email addresses')
+                                    ->required()
+                                    ->reactive()
+                            )
                     ]),
                     Forms\Components\Section::make('Description')
                         ->schema([

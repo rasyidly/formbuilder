@@ -26,10 +26,12 @@ class EmailBlock
                 Forms\Components\Textarea::make('help_text')
                     ->label('Help Text')
                     ->rows(2),
+                Forms\Components\Toggle::make('receive_feedback')
+                    ->label('Receive form submission feedback')
+                    ->default(false),
                 Forms\Components\Toggle::make('is_required')
                     ->label('Required')
                     ->default(false),
-
                 Forms\Components\Group::make([
                     Forms\Components\ToggleButtons::make('col_span')
                         ->label('Column Width')

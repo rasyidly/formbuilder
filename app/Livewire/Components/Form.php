@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Events\FormSubmittedEvent;
 use App\Models;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -87,6 +88,10 @@ class Form extends Component implements HasForms
             Models\SubmissionValue::query()->insert($submissionValues);
 
             DB::commit();
+
+            // Trigger event for form submission
+            FormSubmittedEvent::dispatch($submission);
+
             session()->flash('success', 'Submission saved successfully!');
             // Optionally, reset form or redirect
             $this->reset('data');
