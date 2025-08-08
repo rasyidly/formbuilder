@@ -90,7 +90,7 @@ class Form extends Component implements HasForms
             DB::commit();
 
             // Trigger event for form submission
-            FormSubmittedEvent::dispatch($submission);
+            // FormSubmittedEvent::dispatch($submission);
 
             session()->flash('success', 'Submission saved successfully!');
             // Optionally, reset form or redirect
