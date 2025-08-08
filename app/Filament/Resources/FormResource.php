@@ -65,7 +65,14 @@ class FormResource extends Resource
                             ->default(true)
                             ->reactive(),
                     ]),
-                    Forms\Components\Section::make('Receiving emails')->schema([
+                    Forms\Components\Section::make('Configurations')->schema([
+                        Forms\Components\TextInput::make('settings.redirection_url')
+                            ->label('Redirection URL')
+                            ->placeholder('Enter redirection URLs')
+                            ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
+                            ->required()
+                            ->url()
+                            ->reactive(),
                         Forms\Components\Repeater::make('settings.recipient_emails')
                             ->label('Email addresses to receive form submissions')
                             ->addActionLabel('Add recipient email')

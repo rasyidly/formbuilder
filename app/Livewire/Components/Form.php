@@ -47,7 +47,7 @@ class Form extends Component implements HasForms
             ]);
     }
 
-    public function create(): void
+    public function create()
     {
         $data = $this->form->getState();
 
@@ -90,7 +90,11 @@ class Form extends Component implements HasForms
             DB::commit();
 
             // Trigger event for form submission
-            // FormSubmittedEvent::dispatch($submission);
+            FormSubmittedEvent::dispatch($submission);
+
+            if ($this->model->settings['redirection_url'] ?? false) {
+                return redirect($this->model->settings['redirection_url']);
+            }
 
             session()->flash('success', 'Submission saved successfully!');
             // Optionally, reset form or redirect
