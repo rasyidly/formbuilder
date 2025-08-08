@@ -66,7 +66,7 @@ class FormResource extends Resource
                             ->reactive(),
                     ]),
                     Forms\Components\Section::make('Receiving emails')->schema([
-                        Forms\Components\Repeater::make('recipient_emails')
+                        Forms\Components\Repeater::make('settings.recipient_emails')
                             ->label('Email addresses to receive form submissions')
                             ->addActionLabel('Add recipient email')
                             ->simple(
