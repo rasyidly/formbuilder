@@ -70,7 +70,6 @@ class FormResource extends Resource
                             ->label('Redirection URL')
                             ->placeholder('Enter redirection URLs')
                             ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
-                            ->required()
                             ->url()
                             ->reactive(),
                         Forms\Components\Repeater::make('settings.recipient_emails')

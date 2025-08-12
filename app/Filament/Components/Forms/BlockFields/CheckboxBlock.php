@@ -34,19 +34,15 @@ class CheckboxBlock
                         ->inline()
                         ->grouped()
                         ->options([
-                            1 => '1/6',
-                            2 => '2/6',
-                            3 => '3/6',
-                            4 => '4/6',
-                            5 => '5/6',
-                            6 => 'Full',
+                            'full' => 'Full',
+                            3 => 'Half',
                         ])
                         ->helperText('How many columns this field should span in the layout, set "Full" or leave empty for full width'),
                     Forms\Components\ToggleButtons::make('col_start')
                         ->label('Column Start')
                         ->inline()
                         ->grouped()
-                        ->helperText('Select the column where this field should begin in the layout. Choose "1st" to start at the first column, or leave blank to use the default starting position.')
+                        ->helperText('Select the column where this field should begin in the layout. Choose "Left" to start at the first column, or leave blank to use the default starting position.')
                 ])->columns(['xl' => 2])
             ]);
     }
