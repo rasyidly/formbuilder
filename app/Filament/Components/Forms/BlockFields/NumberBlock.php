@@ -52,15 +52,7 @@ class NumberBlock
                         ->grouped()
                         ->options([
                             'full' => 'Full',
-                            3 => 'Half',
-                        ]),
-                    Forms\Components\ToggleButtons::make('col_start')
-                        ->label('Column Start')
-                        ->inline()
-                        ->grouped()
-                        ->options([
-                            1 => 'Left',
-                            4 => 'Right',
+                            6 => 'Half',
                         ]),
                 ])->columns(['xl' => 2])
             ]);

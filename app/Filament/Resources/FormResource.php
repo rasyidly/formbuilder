@@ -62,16 +62,18 @@ class FormResource extends Resource
                     Forms\Components\Section::make('Publication')->schema([
                         Forms\Components\Toggle::make('published_at')
                             ->label('Mark form as published and accessible')
-                            ->default(true)
-                            ->reactive(),
+                            ->default(true),
                     ]),
                     Forms\Components\Section::make('Configurations')->schema([
                         Forms\Components\TextInput::make('settings.redirection_url')
                             ->label('Redirection URL')
                             ->placeholder('Enter redirection URLs')
                             ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
-                            ->url()
-                            ->reactive(),
+                            ->url(),
+                        Forms\Components\Textarea::make('settings.submitted_message')
+                            ->label('Confirmation Message')
+                            ->placeholder('Enter the message to display after submission')
+                            ->helperText('This message will be displayed to users after they submit the form.'),
                         Forms\Components\Repeater::make('settings.recipient_emails')
                             ->label('Email addresses to receive form submissions')
                             ->addActionLabel('Add recipient email')
@@ -79,8 +81,7 @@ class FormResource extends Resource
                                 Forms\Components\TextInput::make('email')
                                     ->placeholder('Enter email addresses')
                                     ->required()
-                                    ->reactive()
-                            )
+                            ),
                     ]),
                     Forms\Components\Section::make('Description')
                         ->schema([

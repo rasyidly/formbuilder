@@ -35,7 +35,7 @@ class CheckboxBlock
                         ->grouped()
                         ->options([
                             'full' => 'Full',
-                            3 => 'Half',
+                            6 => 'Half',
                         ]),
                     Forms\Components\ToggleButtons::make('col_start')
                         ->label('Column Start')

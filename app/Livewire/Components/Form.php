@@ -31,7 +31,7 @@ class Form extends Component implements HasForms
         return $form
             ->columns(1)
             ->statePath('data')
-            ->columns(6)
+            ->columns(12)
             ->schema([
                 ...$requiredFields,
                 ...($this->model?->fields->map(function (Models\FormField $field) {
@@ -41,8 +41,7 @@ class Form extends Component implements HasForms
                         ->required($field->is_required)
                         ->helperText($field->help_text)
                         ->key($field->id)
-                        ->columnSpan($field->settings['col_span'] ?? 'full')
-                        ->columnStart($field->settings['col_start'] ?? 1);
+                        ->columnSpan($field->settings['col_span'] ?? 'full');
                 })->toArray() ?? [])
             ]);
     }
@@ -96,7 +95,7 @@ class Form extends Component implements HasForms
                 return redirect($this->model->settings['redirection_url']);
             }
 
-            session()->flash('success', 'Submission saved successfully!');
+            session()->flash('success', $this->model->settings['submitted_message'] ?? 'Submission saved successfully!');
             // Optionally, reset form or redirect
             $this->reset('data');
         } catch (\Throwable $e) {

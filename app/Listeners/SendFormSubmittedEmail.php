@@ -25,7 +25,7 @@ class SendFormSubmittedEmail
     public function handle(FormSubmittedEvent $event): void
     {
         // Send notification email to admin/recipient
-        if (isset($event->submission->form->settings['recipient_emails'])) {
+        if (isset($event->submission->form->settings['recipient_emails']) && count($event->submission->form->settings['recipient_emails'])) {
             Mail::to($event->submission->form->settings['recipient_emails'])->send(new FormSubmitted($event->submission));
         }
 
