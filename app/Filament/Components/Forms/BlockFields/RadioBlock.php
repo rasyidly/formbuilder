@@ -59,8 +59,7 @@ class RadioBlock
                         ->options([
                             'full' => 'Full',
                             3 => 'Half',
-                        ])
-                        ->helperText('How many columns this field should span in the layout, set "Full" or leave empty for full width'),
+                        ]),
                     Forms\Components\ToggleButtons::make('col_start')
                         ->label('Column Start')
                         ->inline()
@@ -68,8 +67,7 @@ class RadioBlock
                         ->options([
                             1 => 'Left',
                             4 => 'Right',
-                        ])
-                        ->helperText('Select the column where this field should begin in the layout. Choose "Left" to start at the first column, or leave blank to use the default starting position.'),
+                        ]),
                 ])->columns(['xl' => 2])
             ]);
     }
