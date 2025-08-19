@@ -24,72 +24,77 @@ class FormResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(['lg' => 3])
+            ->columns(['lg' => 5])
             ->schema([
-                Forms\Components\Group::make([
-                    Forms\Components\Section::make('General Information')
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->required()
-                                ->maxLength(255)
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (Forms\Set $set, string $operation, Forms\Get $get) {
-                                    if ($operation === 'create') {
-                                        $set('slug', Str::slug($get('name')));
-                                    }
-                                }),
-                            Forms\Components\TextInput::make('slug')
-                                ->required()
-                                ->unique(ignoreRecord: true)
-                                ->maxLength(255),
-                        ]),
-                    Forms\Components\Section::make('Fields')
-                        ->schema([
-                            Forms\Components\Builder::make('fields')
-                                ->blocks(AppComponents\Forms\BlockFields\FormBlockRegistry::getAllBlocks())
-                                ->addActionLabel('Add Field')
-                                ->blockIcons()
-                                ->reorderable()
-                                ->collapsible()
-                                ->blockNumbers(false)
-                                ->hiddenLabel()
-                                ->cloneable()
-                                ->blockPickerColumns(['lg' => 2])
-                                ->minItems(1),
-                        ]),
-                ])->columnSpan(['lg' => 2]),
-                Forms\Components\Group::make([
-                    Forms\Components\Section::make('Publication')->schema([
-                        Forms\Components\Toggle::make('published_at')
-                            ->label('Mark form as published and accessible')
-                            ->default(true),
+                Forms\Components\Section::make('Fields')
+                    ->columnSpan(['lg' => 3])
+                    ->schema([
+                        Forms\Components\Builder::make('fields')
+                            ->blocks(AppComponents\Forms\BlockFields\FormBlockRegistry::getAllBlocks())
+                            ->addActionLabel('Add Field')
+                            ->blockIcons()
+                            ->reorderable()
+                            ->collapsible()
+                            ->blockNumbers(false)
+                            ->cloneable()
+                            ->hiddenLabel()
+                            ->blockPickerColumns(['lg' => 2])
+                            ->minItems(1)
                     ]),
-                    Forms\Components\Section::make('Configurations')->schema([
-                        Forms\Components\TextInput::make('settings.redirection_url')
-                            ->label('Redirection URL')
-                            ->placeholder('Enter redirection URLs')
-                            ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
-                            ->url(),
-                        Forms\Components\Textarea::make('settings.submitted_message')
-                            ->label('Confirmation Message')
-                            ->placeholder('Enter the message to display after submission')
-                            ->helperText('This message will be displayed to users after they submit the form.'),
-                        Forms\Components\Repeater::make('settings.recipient_emails')
-                            ->label('Email addresses to receive form submissions')
-                            ->addActionLabel('Add recipient email')
-                            ->simple(
-                                Forms\Components\TextInput::make('email')
-                                    ->placeholder('Enter email addresses')
+                Forms\Components\Tabs::make()
+                    ->columnSpan(['lg' => 2])
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('General')
+                            ->icon('heroicon-o-information-circle')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
                                     ->required()
-                            ),
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Forms\Set $set, string $operation, Forms\Get $get) {
+                                        if ($operation === 'create') {
+                                            $set('slug', Str::slug($get('name')));
+                                        }
+                                    }),
+                                Forms\Components\TextInput::make('slug')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->maxLength(255),
+                                Forms\Components\Toggle::make('published_at')
+                                    ->label('Mark form as published and accessible')
+                                    ->default(true),
+                                Forms\Components\RichEditor::make('description')
+                                    ->label('Form Description')
+                                    ->maxLength(10000),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Confirmation')
+                            ->icon('heroicon-o-check-circle')
+                            ->schema([
+                                Forms\Components\TextInput::make('settings.redirection_url')
+                                    ->label('Redirection URL')
+                                    ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
+                                    ->url(),
+                                Forms\Components\Textarea::make('settings.submitted_message')
+                                    ->label('Confirmation Message')
+                                    ->helperText('This message will be displayed to users after they submit the form.'),
+                                Forms\Components\TextInput::make('settings.submit_label')
+                                    ->label('Submit Button Label')
+                                    ->default('Submit')
+                                    ->helperText('This label will be displayed on the form submission button.'),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Notifications')
+                            ->icon('heroicon-o-bell')
+                            ->schema([
+                                Forms\Components\Repeater::make('settings.recipient_emails')
+                                    ->label('Email addresses to receive form submissions')
+                                    ->addActionLabel('Add recipient email')
+                                    ->simple(
+                                        Forms\Components\TextInput::make('email')
+                                            ->placeholder('Enter email addresses')
+                                            ->required()
+                                    ),
+                            ]),
                     ]),
-                    Forms\Components\Section::make('Description')
-                        ->schema([
-                            Forms\Components\RichEditor::make('description')
-                                ->hiddenLabel()
-                                ->maxLength(10000),
-                        ]),
-                ]),
             ]);
     }
 

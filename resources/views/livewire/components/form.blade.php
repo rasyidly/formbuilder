@@ -13,7 +13,7 @@
         @else
         <x-filament::button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-50">
             <span wire:loading>Submitting ...</span>
-            <span wire:loading.remove>Submit</span>
+            <span wire:loading.remove>{{ $this->model->settings['submit_label'] ?? 'Submit' }}</span>
         </x-filament::button>
         @endif
 
