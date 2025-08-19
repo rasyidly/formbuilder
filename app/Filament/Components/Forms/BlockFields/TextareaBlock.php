@@ -21,11 +21,11 @@ class TextareaBlock
                     ->live()
                     ->label('Label')
                     ->required(),
-                Forms\Components\TextInput::make('placeholder')
-                    ->label('Placeholder'),
-                Forms\Components\Textarea::make('help_text')
-                    ->label('Help Text')
-                    ->rows(2),
+                // Forms\Components\TextInput::make('placeholder')
+                //     ->label('Placeholder'),
+                // Forms\Components\Textarea::make('help_text')
+                //     ->label('Help Text')
+                //     ->rows(2),
                 Forms\Components\TextInput::make('rows')
                     ->label('Number of Rows')
                     ->numeric()

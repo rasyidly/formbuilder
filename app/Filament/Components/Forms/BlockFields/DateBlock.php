@@ -22,9 +22,9 @@ class DateBlock
                     ->live()
                     ->label('Label')
                     ->required(),
-                Forms\Components\Textarea::make('help_text')
-                    ->label('Help Text')
-                    ->rows(2),
+                // Forms\Components\Textarea::make('help_text')
+                //     ->label('Help Text')
+                //     ->rows(2),
                 Forms\Components\DatePicker::make('min_date')
                     ->label('Minimum Date'),
                 Forms\Components\DatePicker::make('max_date')

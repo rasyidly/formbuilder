@@ -21,9 +21,9 @@ class FileBlock
                     ->live()
                     ->label('Label')
                     ->required(),
-                Forms\Components\Textarea::make('help_text')
-                    ->label('Help Text')
-                    ->rows(2),
+                // Forms\Components\Textarea::make('help_text')
+                //     ->label('Help Text')
+                //     ->rows(2),
                 Forms\Components\Toggle::make('multiple')
                     ->label('Allow Multiple Files')
                     ->default(false),

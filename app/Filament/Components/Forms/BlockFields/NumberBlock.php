@@ -23,13 +23,13 @@ class NumberBlock
                     ->label('Label')
                     ->columnSpanFull()
                     ->required(),
-                Forms\Components\TextInput::make('placeholder')
-                    ->label('Placeholder')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('help_text')
-                    ->label('Help Text')
-                    ->columnSpanFull()
-                    ->rows(2),
+                // Forms\Components\TextInput::make('placeholder')
+                //     ->label('Placeholder')
+                //     ->columnSpanFull(),
+                // Forms\Components\Textarea::make('help_text')
+                //     ->label('Help Text')
+                //     ->columnSpanFull()
+                //     ->rows(2),
                 Forms\Components\TextInput::make('min')
                     ->label('Minimum Value')
                     ->numeric(),
