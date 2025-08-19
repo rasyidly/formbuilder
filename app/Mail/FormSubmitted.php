@@ -27,7 +27,7 @@ class FormSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Form Submitted',
+            subject: $this->submission->form->settings['notification_subject'] ?? 'New Form Submission',
         );
     }
 

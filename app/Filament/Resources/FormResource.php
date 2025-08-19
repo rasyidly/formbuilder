@@ -85,6 +85,10 @@ class FormResource extends Resource
                         Forms\Components\Tabs\Tab::make('Notifications')
                             ->icon('heroicon-o-bell')
                             ->schema([
+                                Forms\Components\TextInput::make('settings.notification_subject')
+                                    ->label('Email Subject')
+                                    ->default('New Form Submission')
+                                    ->helperText('This subject will be used for the notification emails.'),
                                 Forms\Components\Repeater::make('settings.recipient_emails')
                                     ->label('Email addresses to receive form submissions')
                                     ->addActionLabel('Add recipient email')
