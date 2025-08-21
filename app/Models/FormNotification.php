@@ -22,6 +22,7 @@ class FormNotification extends Model
     {
         return [
             'recipients' => 'array',
+            'body' => 'json',
         ];
     }
 
