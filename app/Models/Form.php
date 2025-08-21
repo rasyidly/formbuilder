@@ -114,4 +114,9 @@ class Form extends Model
             'archived_at' => now(),
         ]);
     }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(FormNotification::class);
+    }
 }

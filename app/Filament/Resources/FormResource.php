@@ -84,19 +84,26 @@ class FormResource extends Resource
                             ]),
                         Forms\Components\Tabs\Tab::make('Notifications')
                             ->icon('heroicon-o-bell')
+                            ->visible(fn($record) => $record?->notifications->isNotEmpty())
                             ->schema([
-                                Forms\Components\TextInput::make('settings.notification_subject')
-                                    ->label('Email Subject')
-                                    ->default('New Form Submission')
-                                    ->helperText('This subject will be used for the notification emails.'),
-                                Forms\Components\Repeater::make('settings.recipient_emails')
-                                    ->label('Email addresses to receive form submissions')
-                                    ->addActionLabel('Add recipient email')
+                                Forms\Components\Repeater::make('notifications')
+                                    ->label('Notifications')
+                                    ->relationship('notifications')
+                                    ->defaultItems(0)
+                                    ->visible(fn($record) => $record?->notifications->isNotEmpty())
                                     ->simple(
-                                        Forms\Components\TextInput::make('email')
-                                            ->placeholder('Enter email addresses')
-                                            ->required()
-                                    ),
+                                        Forms\Components\TextInput::make('subject')
+                                            ->label('Subject')
+                                            ->disabled()
+                                            ->readOnly(),
+                                    )
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->columns(1)
+                                    ->reorderable(false)
+                                    ->hiddenLabel(),
+                                Forms\Components\Placeholder::make('notifications_info')
+                                    ->content('To manage notifications, please scroll down and use the Notifications section below.'),
                             ]),
                     ]),
             ]);
@@ -159,7 +166,7 @@ class FormResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            FormResource\RelationManagers\NotificationsRelationManager::class,
         ];
     }
 
