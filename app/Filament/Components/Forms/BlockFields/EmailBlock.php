@@ -13,10 +13,6 @@ class EmailBlock
             ->icon('heroicon-o-envelope')
             ->schema([
                 Forms\Components\Hidden::make('id'),
-                Forms\Components\TextInput::make('name')
-                    ->label('Field Name')
-                    ->required()
-                    ->hidden(),
                 Forms\Components\TextInput::make('label')
                     ->live()
                     ->label('Label')

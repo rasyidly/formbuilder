@@ -13,12 +13,10 @@ trait ManagesFormFields
         $existingFieldsById = $existingFields->keyBy('id');
         $processedIds = [];
 
-
         foreach ($fieldsData as $sequence => $fieldData) {
             $fieldType = $fieldData['type'];
             $data = $fieldData['data'];
             $id = $fieldData['data']['id'] ?? null;
-
 
             // Prepare options for fields that support them
             $options = null;
@@ -82,7 +80,7 @@ trait ManagesFormFields
     {
         switch ($fieldType) {
             case 'email':
-                $validationRules[] = 'email';
+                $validationRules = ['email'];
                 break;
             case 'number':
                 $validationRules[] = 'numeric';
@@ -125,7 +123,7 @@ trait ManagesFormFields
     protected function prepareFieldSettings(array $data): array
     {
         $settings = [];
-        $excludedKeys = ['name', 'label', 'placeholder', 'help_text', 'is_required', 'validation_rules', 'options'];
+        $excludedKeys = ['id', 'name', 'label', 'placeholder', 'help_text', 'is_required', 'validation_rules', 'options'];
 
         foreach ($data as $key => $value) {
             if (! in_array($key, $excludedKeys)) {
