@@ -21,14 +21,6 @@ class EmailBlock
                     ->live()
                     ->label('Label')
                     ->required(),
-                // Forms\Components\TextInput::make('placeholder')
-                //     ->label('Placeholder'),
-                // Forms\Components\Textarea::make('help_text')
-                //     ->label('Help Text')
-                //     ->rows(2),
-                Forms\Components\Toggle::make('receive_feedback')
-                    ->label('Receive form submission feedback')
-                    ->default(false),
                 Forms\Components\Toggle::make('is_required')
                     ->label('Required')
                     ->default(false),

@@ -58,65 +58,39 @@ class FormNotification extends Model
     }
 
     /**
-     * Get all recipients as a flat array.
-     */
-    public function getAllRecipients(): array
-    {
-        $recipients = [];
-
-        // Add custom recipients
-        if ($this->hasCustomRecipients()) {
-            $recipients = array_merge($recipients, $this->recipients);
-        }
-
-        return array_unique($recipients);
-    }
-
-    /**
-     * Replace placeholders in the given text with actual submission values.
-     */
-    public function replacePlaceholders(string $text, array $submissionData = []): string
-    {
-        // Replace TipTap editor mentions format: @[label](id)
-        $text = preg_replace_callback('/@\[([^\]]+)\]\((\d+)\)/', function ($matches) use ($submissionData) {
-            $fieldLabel = $matches[1];
-
-            // Check if the placeholder exists in submission data
-            if (isset($submissionData[$fieldLabel])) {
-                return $submissionData[$fieldLabel];
-            }
-
-            // Return the field label if no replacement found
-            return $fieldLabel;
-        }, $text);
-
-        // Also handle legacy %placeholder% format for backward compatibility
-        return preg_replace_callback('/%([^%]+)%/', function ($matches) use ($submissionData) {
-            $placeholder = $matches[1];
-
-            // Check if the placeholder exists in submission data
-            if (isset($submissionData[$placeholder])) {
-                return $submissionData[$placeholder];
-            }
-
-            // Return the original placeholder if no replacement found
-            return $matches[0];
-        }, $text);
-    }
-
-    /**
-     * Get the subject with placeholders replaced.
-     */
-    public function getProcessedSubject(array $submissionData = []): string
-    {
-        return $this->replacePlaceholders($this->subject ?? '', $submissionData);
-    }
-
-    /**
      * Get the body with placeholders replaced.
      */
-    public function getProcessedBody(array $submissionData = []): string
+    public function getProcessedBody(Submission $submission): string
     {
-        return tiptap_converter()->asHTML($this->body ?? '');
+        $body = $this->body ?? '';
+        // $this->body = {"type":"doc","content":[{"type":"paragraph","attrs":{"class":null,"style":null},"content":[{"type":"mention","attrs":{"id":12,"label":"Your Email","href":null,"type":null,"target":"_blank","data":[]}},{"type":"text","text":" Submitting new form"}]}]}
+        // submission is model Submission has values
+
+        // Build submissionData: [field_id => value]
+        $values = $submission->values->pluck('value', 'form_field_id')->toArray();
+
+        $doc = is_string($body) ? json_decode($body, true) : $body;
+
+        if (is_array($doc) && isset($doc['content'])) {
+            foreach ($doc['content'] as &$block) {
+                if (isset($block['content']) && is_array($block['content'])) {
+                    foreach ($block['content'] as $i => $node) {
+                        if ($node['type'] === 'mention' && isset($node['attrs']['id'])) {
+                            $fieldId = $node['attrs']['id'];
+                            $value = $values[$fieldId] ?? $node['attrs']['label'];
+                            // Replace the node in-place
+                            $block['content'][$i] = [
+                                'type' => 'text',
+                                'text' => $value,
+                            ];
+                        }
+                    }
+                }
+            }
+            unset($block, $node);
+            $body = $doc;
+        }
+
+        return tiptap_converter()->asHTML($body);
     }
 }
