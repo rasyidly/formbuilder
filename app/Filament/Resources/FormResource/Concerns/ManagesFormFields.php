@@ -10,13 +10,17 @@ trait ManagesFormFields
     {
         // Get all current fields for this form
         $existingFields = FormField::where('form_id', $formId)->get();
-        $existingFieldsById = $existingFields->keyBy('id');
+        // Key by string id to ensure loose/strict key comparisons with incoming payloads work
+        $existingFieldsById = $existingFields->keyBy(function ($item) {
+            return (string) $item->id;
+        });
         $processedIds = [];
 
         foreach ($fieldsData as $sequence => $fieldData) {
             $fieldType = $fieldData['type'];
             $data = $fieldData['data'];
-            $id = $fieldData['data']['id'] ?? null;
+            // Normalize incoming id to string when present. Frontend may send numeric or string ids.
+            $id = isset($fieldData['data']['id']) ? (string) $fieldData['data']['id'] : null;
 
             // Prepare options for fields that support them
             $options = null;
@@ -52,7 +56,7 @@ trait ManagesFormFields
                 'is_required' => $data['is_required'] ?? false,
             ];
 
-            if ($id && isset($existingFieldsById[$id]) && $existingFieldsById[$id]->form_id == $formId) {
+            if ($id !== null && $existingFieldsById->has($id) && $existingFieldsById[$id]->form_id == $formId) {
                 // Update existing field (only if it belongs to this form)
                 $field = $existingFieldsById[$id];
                 $field->update($fieldPayload);
@@ -60,11 +64,12 @@ trait ManagesFormFields
                 if (method_exists($field, 'restore') && $field->trashed()) {
                     $field->restore();
                 }
-                $processedIds[] = $field->id;
+                // store as int so later diff() compares correctly with pluck('id') (ints)
+                $processedIds[] = (int) $field->id;
             } elseif (!$id) {
                 // Create new field (no id means new)
                 $newField = FormField::create($fieldPayload);
-                $processedIds[] = $newField->id;
+                $processedIds[] = (int) $newField->id;
             }
             // If $id is set but not found in $existingFieldsById, skip (do not create new with that id)
         }
