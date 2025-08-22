@@ -64,6 +64,10 @@ class FormResource extends Resource
                         Forms\Components\Toggle::make('published_at')
                             ->label('Mark form as published and accessible')
                             ->default(true),
+                        Forms\Components\TextInput::make('settings.submit_label')
+                            ->label('Submit Button Label')
+                            ->default('Submit')
+                            ->helperText('This label will be displayed on the form submission button.'),
                         Forms\Components\RichEditor::make('description')
                             ->label('Form Description')
                             ->maxLength(10000),

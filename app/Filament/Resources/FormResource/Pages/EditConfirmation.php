@@ -26,10 +26,6 @@ class EditConfirmation extends EditRecord
                     Forms\Components\Textarea::make('settings.submitted_message')
                         ->label('Confirmation Message')
                         ->helperText('This message will be displayed to users after they submit the form.'),
-                    Forms\Components\TextInput::make('settings.submit_label')
-                        ->label('Submit Button Label')
-                        ->default('Submit')
-                        ->helperText('This label will be displayed on the form submission button.'),
                 ])
             ]);
     }
