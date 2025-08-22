@@ -15,9 +15,9 @@ class Submission extends Model
 
     protected $fillable = [
         'form_id',
-        'submitter_id',
-        'submitter_name',
-        'submitter_email',
+        'submitter_id', // [QUESTION] we don't need this anymore?
+        'submitter_name', // [QUESTION] we don't need this anymore?
+        'submitter_email', // [QUESTION] we don't need this anymore?
         'status',
         'notes',
         'metadata',

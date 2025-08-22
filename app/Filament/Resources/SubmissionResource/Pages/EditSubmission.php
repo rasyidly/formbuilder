@@ -27,7 +27,7 @@ class EditSubmission extends EditRecord
         $data = $record->toArray();
         $data['values'] = $record->values->mapWithKeys(function ($value) {
             return [
-                $value->form_field_id => $value->value,
+                $value->form_field_id => $value->formField->hasOptions() ? json_decode($value->value, true) : $value->value,
             ];
         })->toArray();
 

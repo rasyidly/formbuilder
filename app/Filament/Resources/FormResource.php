@@ -7,6 +7,8 @@ use App\Filament\Resources\FormResource\Pages;
 use App\Models\Form as FormModel;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,6 +22,8 @@ class FormResource extends Resource
     protected static ?string $navigationGroup = 'Forms';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function form(Form $form): Form
     {
@@ -41,71 +45,29 @@ class FormResource extends Resource
                             ->blockPickerColumns(['lg' => 2])
                             ->minItems(1)
                     ]),
-                Forms\Components\Tabs::make()
+                Forms\Components\Section::make('General')
                     ->columnSpan(['lg' => 2])
-                    ->tabs([
-                        Forms\Components\Tabs\Tab::make('General')
-                            ->icon('heroicon-o-information-circle')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Forms\Set $set, string $operation, Forms\Get $get) {
-                                        if ($operation === 'create') {
-                                            $set('slug', Str::slug($get('name')));
-                                        }
-                                    }),
-                                Forms\Components\TextInput::make('slug')
-                                    ->required()
-                                    ->unique(ignoreRecord: true)
-                                    ->maxLength(255),
-                                Forms\Components\Toggle::make('published_at')
-                                    ->label('Mark form as published and accessible')
-                                    ->default(true),
-                                Forms\Components\RichEditor::make('description')
-                                    ->label('Form Description')
-                                    ->maxLength(10000),
-                            ]),
-                        Forms\Components\Tabs\Tab::make('Confirmation')
-                            ->icon('heroicon-o-check-circle')
-                            ->schema([
-                                Forms\Components\TextInput::make('settings.redirection_url')
-                                    ->label('Redirection URL')
-                                    ->helperText('If URLs are provided, users will be redirected to the specified URL(s) after submitting the form.')
-                                    ->url(),
-                                Forms\Components\Textarea::make('settings.submitted_message')
-                                    ->label('Confirmation Message')
-                                    ->helperText('This message will be displayed to users after they submit the form.'),
-                                Forms\Components\TextInput::make('settings.submit_label')
-                                    ->label('Submit Button Label')
-                                    ->default('Submit')
-                                    ->helperText('This label will be displayed on the form submission button.'),
-                            ]),
-                        Forms\Components\Tabs\Tab::make('Notifications')
-                            ->icon('heroicon-o-bell')
-                            ->visible(fn($record) => $record?->notifications->isNotEmpty())
-                            ->schema([
-                                Forms\Components\Repeater::make('notifications')
-                                    ->label('Notifications')
-                                    ->relationship('notifications')
-                                    ->defaultItems(0)
-                                    ->visible(fn($record) => $record?->notifications->isNotEmpty())
-                                    ->simple(
-                                        Forms\Components\TextInput::make('subject')
-                                            ->label('Subject')
-                                            ->disabled()
-                                            ->readOnly(),
-                                    )
-                                    ->addable(false)
-                                    ->deletable(false)
-                                    ->columns(1)
-                                    ->reorderable(false)
-                                    ->hiddenLabel(),
-                                Forms\Components\Placeholder::make('notifications_info')
-                                    ->content('To manage notifications, please scroll down and use the Notifications section below.'),
-                            ]),
-                    ]),
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Forms\Set $set, string $operation, Forms\Get $get) {
+                                if ($operation === 'create') {
+                                    $set('slug', Str::slug($get('name')));
+                                }
+                            }),
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\Toggle::make('published_at')
+                            ->label('Mark form as published and accessible')
+                            ->default(true),
+                        Forms\Components\RichEditor::make('description')
+                            ->label('Form Description')
+                            ->maxLength(10000),
+                    ])
             ]);
     }
 
@@ -163,11 +125,14 @@ class FormResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return [
-            FormResource\RelationManagers\NotificationsRelationManager::class,
-        ];
+        return $page->generateNavigationItems([
+            Pages\EditForm::class,
+            Pages\EditConfirmation::class,
+            Pages\ManageNotifications::class,
+            Pages\ManageSubmissions::class
+        ]);
     }
 
     public static function getPages(): array
@@ -176,6 +141,9 @@ class FormResource extends Resource
             'index' => Pages\ListForms::route('/'),
             'create' => Pages\CreateForm::route('/create'),
             'edit' => Pages\EditForm::route('/{record}/edit'),
+            'confirmation' => Pages\EditConfirmation::route('/{record}/confirmation'),
+            'notifications' => Pages\ManageNotifications::route('/{record}/notifications'),
+            'submissions' => Pages\ManageSubmissions::route('/{record}/submissions'),
         ];
     }
 }

@@ -33,7 +33,7 @@ class SubmissionResource extends Resource
                         ->relationship('form', 'name')
                         ->searchable()
                         ->required()
-                        ->disabled(fn (string $operation) => $operation === 'edit')
+                        ->disabled(fn(string $operation) => $operation === 'edit')
                         ->preload()
                         ->live()
                         ->columnSpan(2),
@@ -59,7 +59,7 @@ class SubmissionResource extends Resource
                             if ($form = Models\Form::with('fields')->find($get('form_id'))) {
                                 return $form->fields->map(function (Models\FormField $field) {
                                     return $field->type->getField($field)
-                                        ->statePath('values.'.$field->id)
+                                        ->statePath('values.' . $field->id)
                                         ->label($field->label)
                                         ->required($field->is_required)
                                         ->helperText($field->help_text)
@@ -69,40 +69,31 @@ class SubmissionResource extends Resource
 
                             return [];
                         }),
-                ])->columnSpan(['lg' => 2])->visible(fn ($get) => $get('form_id') !== null),
+                ])->columnSpan(['lg' => 2])->visible(fn($get) => $get('form_id') !== null),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Submission Details')
                         ->schema([
-                            Select::make('submitter_id')
-                                ->label('Submitter')
-                                ->helperText('Select a user if the submission is associated with a registered user.')
-                                ->relationship('submitter', 'name')
-                                ->searchable()
-                                ->preload()
-                                ->live()
-                                ->afterStateUpdated(function ($state, callable $set) {
-                                    $user = User::find($state);
-                                    $set('submitter_name', $user?->name);
-                                    $set('submitter_email', $user?->email);
-                                }),
-                            Forms\Components\TextInput::make('submitter_name')
-                                ->label('Submitter Name'),
-                            Forms\Components\TextInput::make('submitter_email')
-                                ->label('Submitter Email'),
                             Forms\Components\TextInput::make('submitter_ip')
                                 ->label('Submitter IP')
                                 ->disabled()
-                                ->visible(fn (string $operation) => $operation === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                             Forms\Components\TextInput::make('user_agent')
                                 ->label('User Agent')
                                 ->disabled()
-                                ->visible(fn (string $operation) => $operation === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                             Forms\Components\DateTimePicker::make('created_at')
                                 ->label('Created At')
                                 ->disabled()
-                                ->visible(fn (string $operation) => $operation === 'edit'),
+                                ->visible(fn(string $operation) => $operation === 'edit'),
                         ]),
-                ])->visible(fn ($get) => $get('form_id') !== null),
+                    Forms\Components\Section::make('Notes')
+                        ->schema([
+                            Forms\Components\Textarea::make('notes')
+                                ->hiddenLabel()
+                                ->rows(3)
+                                ->placeholder('Enter any additional notes here...')
+                        ])
+                ])->visible(fn($get) => $get('form_id') !== null),
             ]);
     }
 
@@ -115,23 +106,14 @@ class SubmissionResource extends Resource
                     ->label('Form')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('submitter_name')
-                    ->label('Submitter Name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('submitter_email')
-                    ->label('Submitter Email')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('submitter_ip')
                     ->label('Submitter IP'),
                 Tables\Columns\TextColumn::make('user_agent')
                     ->label('User Agent')
                     ->limit(40),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Submitted At')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('notes')
+                    ->label('Notes')
+                    ->limit(100),
                 Tables\Columns\TextColumn::make('values_count')
                     ->label('Fields Filled')
                     ->counts('values'),

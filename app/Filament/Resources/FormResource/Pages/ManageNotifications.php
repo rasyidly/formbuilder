@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\FormResource\RelationManagers;
+namespace App\Filament\Resources\FormResource\Pages;
 
 use App\Filament\Components as AppComponents;
 use App\Enums\FormFieldType;
+use App\Filament\Resources\FormResource;
 use App\Models\FormField;
-use App\Models\FormNotification;
-use App\Services\NotificationService;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\Data\MentionItem;
@@ -19,14 +19,22 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class NotificationsRelationManager extends RelationManager
+class ManageNotifications extends ManageRelatedRecords
 {
+    protected static string $resource = FormResource::class;
+
     protected static string $relationship = 'notifications';
+
+    protected static ?string $navigationIcon = 'heroicon-o-bell';
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Notifications';
+    }
 
     public function form(Form $form): Form
     {
         return $form
-            ->columns(1)
             ->schema([
                 Forms\Components\Radio::make('recipient_type')
                     ->options([
